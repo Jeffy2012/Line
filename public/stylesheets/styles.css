@@ -366,8 +366,8 @@ th {
 }
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url("/public/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.eot");
-  src: url("/public/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("/public/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("/public/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("/public/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg");
+  src: url("/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.eot");
+  src: url("/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("/stylesheets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg");
 }
 
 /* line 25, c:/Ruby193/lib/ruby/gems/1.9.1/gems/bootstrap-sass-3.1.1.1/vendor/assets/stylesheets/bootstrap/_glyphicons.scss */
@@ -7890,4 +7890,75 @@ button.close {
   .hidden-print {
     display: none !important;
   }
+}
+/* line 6, ../sass/styles.scss */
+.container {
+  width: 768px;
+}
+
+/* line 10, ../sass/styles.scss */
+.line-header {
+  height: 40px;
+}
+
+/* line 14, ../sass/styles.scss */
+.search, .player, .player-control {
+  margin-bottom: 20px;
+}
+
+/* line 18, ../sass/styles.scss */
+.search, .player-control {
+  margin-top: 20px;
+}
+
+/* line 22, ../sass/styles.scss */
+.song-img {
+  display: table-cell;
+  vertical-align: middle;
+  height: 290px;
+  width: 290px;
+  overflow: hidden;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+}
+/* line 29, ../sass/styles.scss */
+.song-img img {
+  vertical-align: middle;
+  width: 290px;
+  height: auto;
+}
+
+/* line 36, ../sass/styles.scss */
+.song-progress .progress {
+  height: 5px;
+  cursor: pointer;
+}
+
+/* line 42, ../sass/styles.scss */
+.player-control .btn {
+  width: 100%;
+}
+
+/* line 47, ../sass/styles.scss */
+.playlist-item, .search-item {
+  margin-bottom: 2px;
+  padding: 10px;
+  line-height: 22px;
+}
+
+/* line 55, ../sass/styles.scss */
+.playlist-item:hover .btn, .search-item:hover .btn {
+  visibility: visible;
+}
+/* line 59, ../sass/styles.scss */
+.playlist-item .btn, .search-item .btn {
+  visibility: hidden;
+}
+
+/* line 65, ../sass/styles.scss */
+.playlist-item .song-name {
+  padding-left: 10px;
 }

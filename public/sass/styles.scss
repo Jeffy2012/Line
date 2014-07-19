@@ -1,3 +1,72 @@
 // customize bootstrap variables here:
 @import "variables";
 @import "bootstrap";
+@import "compass";
+
+.container {
+  width: 768px;
+}
+
+.line-header {
+  height: 40px;
+}
+
+.search, .player, .player-control {
+  margin-bottom: 20px;
+}
+
+.search, .player-control {
+  margin-top: 20px;
+}
+
+.song-img {
+  display: table-cell;
+  vertical-align: middle;
+  height: 290px;
+  width: 290px;
+  overflow: hidden;
+  @include border-radius(50%);
+  img {
+    vertical-align: middle;
+    width: 290px;
+    height: auto;
+  }
+}
+
+.song-progress .progress {
+  height: 5px;
+  cursor: pointer;
+}
+
+.player-control {
+  .btn {
+    width: 100%;
+  }
+}
+
+.playlist-item, .search-item {
+  margin-bottom: 2px;
+  padding: 10px;
+  line-height: 22px;
+}
+
+.playlist-item, .search-item {
+  &:hover {
+    .btn {
+      visibility: visible;
+    }
+  }
+  .btn {
+    visibility: hidden;
+  }
+}
+
+.playlist-item {
+  .song-name {
+    padding-left: 10px;
+  }
+}
+
+.playlist {
+
+}

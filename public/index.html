@@ -3,15 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <title>Line</title>
-    <link rel="stylesheet" href="stylesheets/styles.css"/>
+    <link rel="stylesheet" href="/stylesheets/styles.css"/>
 </head>
 <body>
+<header class="navbar navbar-static-top line-header">
 
+</header>
+<div class="container">
+    <div class="search">
+        <div class="input-group">
+            <input type="text" class="form-control" id="keyword" placeholder="歌词/歌手/拼音"/>
+            <span class="input-group-btn"><button class="btn btn-default" type="button" id="search">Search!
+            </button></span>
+        </div>
+    </div>
+    <div class="player">
+        <div class="song-progress">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="song-img">
+                    <img class="src" src="images/line.png" alt="line"/>
+                </div>
+                <div class="row player-control">
+                    <div class="col-lg-3">
+                        <div class="btn btn-default" id="prev">
+                            <span class="glyphicon glyphicon-backward"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="btn btn-default" id="play">
+                            <span class="glyphicon glyphicon-play"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="btn btn-default" id="pause">
+                            <span class="glyphicon glyphicon-pause"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="btn btn-default" id="next">
+                            <span class="glyphicon glyphicon-forward"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="playlist play-list-con">
+                </div>
+            </div>
+            <div class="col-lg-7 search-item-con">
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/template" id="search-item-temp">
+    <% songs.forEach(function(song,i){ %>
+    <div class="bg-info clearfix search-item"
+         data-hash="<%= song.hash %>"
+         data-name="<%= song.filename %>"
+         data-duration="<%= song.duration %>">
+        <span><%= song.filename %></span>
+
+        <div class="btn btn-default  btn-success btn-xs pull-right">
+            <span class="glyphicon glyphicon-plus"></span>
+        </div>
+    </div>
+    <% }); %>
+</script>
+<script type="text/template" id="playlist-item-temp">
+    <div class="bg-<%= current ? 'primary' : 'info' %> clearfix playlist-item">
+        <div class="btn btn-default btn-xs btn-success play">
+            <span class="glyphicon glyphicon-play"></span>
+        </div>
+        <span class="song-name"><%= name %></span>
+
+        <div class="btn btn-default btn-danger btn-xs pull-right remove">
+            <span class="glyphicon glyphicon-trash"></span>
+        </div>
+    </div>
+</script>
 <script src="javascripts/vendor/jquery-2.1.1.js"></script>
 <script src="javascripts/vendor/underscore.js"></script>
 <script src="javascripts/vendor/backbone.js"></script>
 <script src="javascripts/vendor/howler.js"></script>
 <script src="javascripts/core/fetch.js"></script>
 <script src="javascripts/core/player.js"></script>
+<script src="javascripts/main.js"></script>
 </body>
 </html>

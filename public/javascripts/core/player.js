@@ -1,15 +1,20 @@
 var Music = Backbone.Model.extend({
     defaults: function () {
         return {
-            //stars: 3
+            howl: new Howl({
+                autoplay: false,
+                buffer: true
+            }),
+            current: false
         };
     },
+    idAttribute: 'hash',
     query: Backbone.fetch,
     initialize: function () {
+        this._srcXHR = null;
+        this._infoXHR = null;
+        this._krcXHR = null;
     },
-    _srcXHR: null,
-    _infoXHR: null,
-    _krcXHR: null,
     src: function () {
         var hash = this.get('hash'), self = this;
         if (this._srcXHR === null) {
@@ -48,9 +53,25 @@ var Music = Backbone.Model.extend({
     },
     _dealKrc: function (data) {
 
+    },
+    play: function () {
+        var self = this,
+            howl = this.get('howl');
+        this.src().done(function () {
+            var url = self.get('url');
+            howl.urls(url);
+            howl.play();
+        });
+        this.set('current', true);
     }
 });
 
+['pause', 'stop', 'pos', 'fade', 'fadeIn', 'fadeOut'].forEach(function (method) {
+    Music.prototype[method] = function () {
+        var howl = this.get('howl');
+        return howl[method].apply(howl, arguments);
+    }
+});
 var Playlist = Backbone.Collection.extend({
     model: Music,
     next: function () {
@@ -67,55 +88,77 @@ var player = _.extend({}, Backbone.Events, {
         buffer: true
     }),
     playlist: new Playlist(),
-    play: function () {
-        var self = this,
-            music = this.playlist.at(0);
-        music.src().done(function () {
-            var url = music.get('url');
-            self.howl.urls([url]).play();
-        });
+    play: function (song, callback) {
+        var current = this.current,
+            first = this.playlist.at(0);
+        if (!song) {
+            if (current) {
+                current.play();
+                return true;
+            } else {
+                if (first) {
+                    this.play(first, callback);
+                    return true;
+                }
+            }
+        }
+        if (current) {
+            current.stop();
+            current.set('current', false);
+        }
+        this.current = song;
+        song.play();
+        if (callback) {
+            callback(song);
+        }
     },
-    add: function () {
-
+    add: function (data) {
+        this.playlist.add(data);
     },
-    remove: {
-
-    },
-    setup: function () {
-
+    remove: function (song) {
+        this.playlist.remove(song)
     },
     next: function () {
-
+        var current = this.current,
+            playlist = this.playlist,
+            length = playlist.length,
+            index;
+        if (length <= 1) {
+            //current.stop();
+        } else {
+            index = playlist.indexOf(current);
+            if (index == length - 1) {
+                this.play(playlist.at(0));
+            } else {
+                this.play(playlist.at(index + 1));
+            }
+        }
+    },
+    stop: function () {
+        this.current.stop();
+    },
+    pause: function () {
+        this.current.pause();
     },
     prev: function () {
-
-    }
-});
-['pause', 'stop', 'pos', 'fade', 'fadeIn', 'fadeOut'].forEach(function (method) {
-    Music.prototype[method] = function () {
-        return player.howl[method].apply(player.howl, arguments);
+        var current = this.current,
+            playlist = this.playlist,
+            length = playlist.length,
+            index;
+        if (length <= 1) {
+            //current.stop();
+        } else {
+            index = playlist.indexOf(current);
+            if (index === 0) {
+                this.play(playlist.at(length - 1));
+            } else {
+                this.play(playlist.at(index - 1));
+            }
+        }
     }
 });
 ['load', 'loaderror', 'play', 'pause', 'end'].forEach(function (event) {
     player.howl.on(event, function () {
         player.trigger(event, player);
     });
-});
-player.playlist.add({
-    filename: "周杰伦、杨瑞代 - 准备中",
-    filesize: 3945951,
-    hash: "82ed475862888b9dc44c3dc37ce39257",
-    bitrate: 128,
-    extname: "mp3",
-    duration: 246,
-    mvhash: "",
-    m4afilesize: 1014247,
-    '320hash': "",
-    '320filesize': 0,
-    sqhash: "",
-    sqfilesize: 0,
-    feetype: 0
-});
-player.on('play', function () {
-    console.log('play');
 });

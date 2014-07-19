@@ -383,7 +383,7 @@
          */
         urls: function(urls) {
             var self = this;
-
+            console.log(urls);
             if (urls) {
                 self.stop();
                 self._urls = (typeof urls === 'string') ? [urls] : urls;
