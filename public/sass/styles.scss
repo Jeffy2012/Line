@@ -107,14 +107,23 @@
   }
 }
 
-.playlist-item {
-  .song-name {
-    padding-left: 10px;
-  }
+.song-name {
+  padding-left: 10px;
+  display: inline-block;
+  width: 75%;
+  height: 23px;
+  line-height: 23px;
+  vertical-align: top;
+  @include ellipsis();
 }
 
-.playlist {
-
+.result-name {
+  display: inline-block;
+  height: 22px;
+  width: 90%;
+  @include ellipsis();
+  line-height: 22px;
+  vertical-align: top;
 }
 
 .result-nav {

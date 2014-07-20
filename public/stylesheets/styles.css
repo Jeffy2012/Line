@@ -8019,12 +8019,36 @@ button.close {
   visibility: hidden;
 }
 
-/* line 111, ../sass/styles.scss */
-.playlist-item .song-name {
+/* line 110, ../sass/styles.scss */
+.song-name {
   padding-left: 10px;
+  display: inline-block;
+  width: 75%;
+  height: 23px;
+  line-height: 23px;
+  vertical-align: top;
+  white-space: nowrap;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
 }
 
 /* line 120, ../sass/styles.scss */
+.result-name {
+  display: inline-block;
+  height: 22px;
+  width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  line-height: 22px;
+  vertical-align: top;
+}
+
+/* line 129, ../sass/styles.scss */
 .result-nav {
   text-align: center;
   line-height: 30px;
