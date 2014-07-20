@@ -7,6 +7,10 @@
   width: 768px;
 }
 
+.mb-20 {
+  margin-bottom: 20px;
+}
+
 .line-header {
   height: 40px;
 }
@@ -15,22 +19,64 @@
   margin-bottom: 20px;
 }
 
-.search, .player-control {
+.search {
   margin-top: 20px;
 }
 
 .song-img {
   display: table-cell;
+  position: relative;
   vertical-align: middle;
   height: 290px;
   width: 290px;
+  border: 2px solid rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  @include border-radius(50%);
+  @include border-radius(145px);
+  .center-big {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: 100px;
+    height: 100px;
+    @include border-radius(50%);
+    overflow: hidden;
+    background: RGBA(0, 0, 0, 0.3);
+  }
+  .center-small {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    width: 30px;
+    height: 30px;
+    @include border-radius(50%);
+    overflow: hidden;
+    background: #FFF;
+  }
   img {
     vertical-align: middle;
-    width: 290px;
+    width: 286px;
     height: auto;
   }
+}
+
+@-webkit-keyframes rotate {
+  form {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.rotate {
+  -webkit-animation: rotate 20s infinite;
+  animation: rotate 20s infinite;
 }
 
 .song-progress .progress {
@@ -69,4 +115,9 @@
 
 .playlist {
 
+}
+
+.result-nav {
+  text-align: center;
+  line-height: 30px;
 }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh_CN">
+<html lang="zh_CN" data-ng-app="line">
 <head>
     <meta charset="UTF-8">
     <title>Line</title>
@@ -10,9 +10,11 @@
 
 </header>
 <div class="container">
-    <div class="search">
+    <div class="search" data-ng-controller='searchCtrl'>
         <div class="input-group">
-            <input type="text" class="form-control" id="keyword" placeholder="歌词/歌手/拼音"/>
+            <input type="text" class="form-control" placeholder="歌词/歌手/拼音"
+                   data-ng-model="keyword"
+                   data-ng-keydown="search($event)"/>
             <span class="input-group-btn"><button class="btn btn-default" type="button" id="search">Search!
             </button></span>
         </div>
@@ -27,71 +29,104 @@
         </div>
         <div class="row">
             <div class="col-lg-5">
-                <div class="song-img">
-                    <img class="src" src="images/line.png" alt="line"/>
-                </div>
-                <div class="row player-control">
+                <div class="row player-control"
+                     data-ng-controller="playerCtrl">
+                    <div class="col-lg-12 mb-20">
+                        <div class="song-img"
+                             data-ng-class="{rotate: !playlist.paused}">
+                            <div class="center-big"></div>
+                            <div class="center-small"></div>
+                            <img class="src"
+                                 data-ng-src="{{playlist.current&&playlist.current.imgurl ? playlist.current.imgurl : '/images/line.png'}}"
+                                 alt=""/>
+                        </div>
+                    </div>
                     <div class="col-lg-3">
-                        <div class="btn btn-default" id="prev">
+                        <div class="btn btn-default"
+                             data-ng-click="playlist.prev()">
                             <span class="glyphicon glyphicon-backward"></span>
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <div class="btn btn-default" id="play">
+                        <div class="btn btn-default"
+                             data-ng-show="playlist.paused"
+                             data-ng-click="playlist.play()">
                             <span class="glyphicon glyphicon-play"></span>
                         </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="btn btn-default" id="pause">
+                        <div class="btn btn-default"
+                             data-ng-show="!playlist.paused"
+                             data-ng-click="playlist.pause()">
                             <span class="glyphicon glyphicon-pause"></span>
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <div class="btn btn-default" id="next">
+                        <div class="btn btn-default"
+                             data-ng-click="playlist.stop()">
+                            <span class="glyphicon glyphicon-stop"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="btn btn-default"
+                             data-ng-click="playlist.next()">
                             <span class="glyphicon glyphicon-forward"></span>
                         </div>
                     </div>
                 </div>
-                <div class="playlist play-list-con">
+                <div class="playlist play-list-con" data-ng-controller="playlistCtrl">
+                    <div class="bg-info clearfix playlist-item"
+                         data-ng-class="{'bg-info': playlist.current != track,'btn-primary': playlist.current == track}"
+                         data-ng-repeat="track in playlist.tracks">
+                        <div class="btn btn-default btn-xs btn-success play"
+                             data-ng-click="play(track)">
+                            <span class="glyphicon glyphicon-play"></span>
+                        </div>
+                        <span class="song-name">{{track.filename}}</span>
+
+                        <div class="btn btn-default btn-danger btn-xs pull-right remove"
+                             data-ng-click="remove(track)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-7 search-item-con">
+            <div class="col-lg-7 search-item-con" data-ng-controller="resultsCtrl">
+                <div class="result-nav mb-20 clearfix"
+                     data-ng-if="explorer.total>explorer.query.pagesize">
+                    <button class="btn btn-primary btn-sm pull-left"
+                            data-ng-disabled="explorer.query.page==1"
+                            data-ng-click="explorer.prev()">上一页
+                    </button>
+                    <span>第{{explorer.query.page}}页，共{{explorer.total}}页</span>
+                    <button class="btn btn-primary pull-right btn-sm"
+                            data-ng-disabled="explorer.total<=explorer.query.pagesize"
+                            data-ng-click="explorer.next()">下一页
+                    </button>
+                </div>
+                <div class="bg-info clearfix search-item"
+                     data-ng-repeat="result in explorer.results">
+                    <span>{{result.filename}}</span>
+
+                    <div class="btn btn-success btn-xs pull-right"
+                         data-ng-click="add(result)">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<script type="text/template" id="search-item-temp">
-    <% songs.forEach(function(song,i){ %>
-    <div class="bg-info clearfix search-item"
-         data-hash="<%= song.hash %>"
-         data-name="<%= song.filename %>"
-         data-duration="<%= song.duration %>">
-        <span><%= song.filename %></span>
-
-        <div class="btn btn-default  btn-success btn-xs pull-right">
-            <span class="glyphicon glyphicon-plus"></span>
-        </div>
-    </div>
-    <% }); %>
-</script>
-<script type="text/template" id="playlist-item-temp">
-    <div class="bg-<%= current ? 'primary' : 'info' %> clearfix playlist-item">
-        <div class="btn btn-default btn-xs btn-success play">
-            <span class="glyphicon glyphicon-play"></span>
-        </div>
-        <span class="song-name"><%= name %></span>
-
-        <div class="btn btn-default btn-danger btn-xs pull-right remove">
-            <span class="glyphicon glyphicon-trash"></span>
-        </div>
-    </div>
-</script>
-<script src="javascripts/vendor/jquery-2.1.1.js"></script>
+<script src="javascripts/vendor/jquery/jquery-2.1.1.js"></script>
 <script src="javascripts/vendor/underscore.js"></script>
-<script src="javascripts/vendor/backbone.js"></script>
-<script src="javascripts/vendor/howler.js"></script>
-<script src="javascripts/core/fetch.js"></script>
-<script src="javascripts/core/player.js"></script>
-<script src="javascripts/main.js"></script>
+<script src="javascripts/vendor/howler/howler.js"></script>
+<script src="javascripts/vendor/angular/angular.js"></script>
+<script src="javascripts/line.js"></script>
+<script src="javascripts/service/server.js"></script>
+<script src="javascripts/service/playlist.js"></script>
+<script src="javascripts/service/explorer.js"></script>
+<script src="javascripts/controls/resultsCtrl.js"></script>
+<script src="javascripts/controls/searchCtrl.js"></script>
+<script src="javascripts/controls/playlistCtrl.js"></script>
+<script src="javascripts/controls/playerCtrl.js"></script>
+
 </body>
 </html>
