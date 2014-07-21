@@ -95,12 +95,12 @@
             </div>
             <div class="col-lg-7 search-item-con" data-ng-controller="resultsCtrl">
                 <div class="result-nav mb-20 clearfix"
-                     data-ng-if="explorer.total>explorer.query.pagesize">
+                     data-ng-if="explorer.totalPage>1">
                     <button class="btn btn-primary btn-sm pull-left"
                             data-ng-disabled="explorer.query.page==1"
                             data-ng-click="explorer.prev()">上一页
                     </button>
-                    <span>第{{explorer.query.page}}页，共{{explorer.total}}页</span>
+                    <span>第{{explorer.query.page}}页，共{{explorer.totalPage}}页</span>
                     <button class="btn btn-primary pull-right btn-sm"
                             data-ng-disabled="explorer.total<=explorer.query.pagesize"
                             data-ng-click="explorer.next()">下一页

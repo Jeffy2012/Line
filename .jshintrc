@@ -1,0 +1,23 @@
+{
+    "maxerr": 100,
+    "bitwise": true,
+    "camelcase": true,
+    "curly": true,
+    "forin": true,
+    "immed": true,
+    "indent": 4,
+    "noarg": true,
+    "noempty": true,
+    "quotmark": "single",
+    "undef": true,
+    "unused": true,
+    "maxdepth": 3,
+    "sub": true,
+    "browser": true,
+    "jquery": true,
+    "nonstandard": true,
+    "predef": [
+        "define",
+        "require"
+    ]
+}

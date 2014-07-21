@@ -6,33 +6,59 @@ line.factory("playlist", ['$rootScope', 'server', function ($rootScope, server) 
         paused: true,
         add: function (track) {
             var tracks = this.tracks,
-                index = tracks.indexOf(track);
-            if (index === -1) {
-                tracks.push(track);
-                if (!this.current) {
-                    this.play(track);
+                exist, length, hash;
+            if (track) {
+                hash = track.hash;
+                if (hash) {
+                    exist = tracks.some(function (item) {
+                        return hash === item.hash;
+                    });
+                    if (!exist) {
+                        length = tracks.push(track);
+                        if (length === 1) {
+                            this.play();
+                        }
+                    }
                 }
+
             }
         },
         remove: function (track) {
             var tracks = this.tracks,
+                current = this.current,
+                index;
+            if (track) {
                 index = tracks.indexOf(track);
-            tracks.splice(index, 1)
+                if (index !== -1) {
+                    if (current == track) {
+                        this.next();
+                        // 防止 随机播放的next() 再次随机到track;
+                        this.remove(track);
+                    } else {
+                        tracks.splice(index, 1);
+                    }
+                }
+            }
         },
         next: function () {
             var tracks = this.tracks,
                 length = tracks.length,
                 current = this.current,
                 index = tracks.indexOf(current);
-            if (index == -1) {
-                this.play();
-            } else {
-                if (length > 1) {
-                    if (index == length - 1) {
+            if (length > 0) {
+                this.stop();
+                if (current) {
+                    if (index === -1) {
                         this.play(tracks[0]);
                     } else {
-                        this.play(tracks[index + 1]);
+                        if (index === length - 1) {
+                            this.play(tracks[0]);
+                        } else {
+                            this.play(tracks[index + 1]);
+                        }
                     }
+                } else {
+                    this.play();
                 }
             }
         },
@@ -41,80 +67,128 @@ line.factory("playlist", ['$rootScope', 'server', function ($rootScope, server) 
                 current = this.current,
                 length = tracks.length,
                 index = tracks.indexOf(current);
-            if (index == -1) {
-                this.play();
-            } else {
-                if (length > 1) {
-                    if (index === 0) {
+            if (length > 0) {
+                this.stop();
+                if (current) {
+                    if (index === -1) {
                         this.play(tracks[length - 1]);
                     } else {
-                        this.play(tracks[index - 1]);
+                        if (index === 0) {
+                            this.play(tracks[length - 1]);
+                        } else {
+                            this.play(tracks[index - 1]);
+                        }
                     }
+                } else {
+                    this.play();
                 }
             }
         },
         play: function (track) {
-            var tracks = this.tracks;
-            if (tracks.length === 0) {
-                return;
-            }
-            track = track || tracks[0];
-            var howls = this.howls,
-                hash = track.hash,
-                current = this.current,
-                self = this;
-            if (current && current != track) {
-                howls[current.hash].stop();
-            }
-            this.current = track;
-            if (hash in howls) {
-                howls[hash].play();
-            } else {
-                server
-                    .provide('track.src', {hash: hash})
-                    .then(function (xhr) {
-                        var howl = new Howl({
-                            urls: [xhr.data.url],
-                            autoplay: false,
-                            buffer: true
-                        });
-                        howl.on('end', function () {
-                            $rootScope.$broadcast('playend');
-                            self.paused = true;
-                        });
-                        howls[hash] = howl;
+            var current = this.current,
+                tracks = this.tracks,
+                length = tracks.length,
+                howls = this.howls,
+                self = this,
+                howl, hash, imgUrl;
+            if (track) {
+                hash = track.hash;
+                if (hash) {
+                    howl = howls[hash];
+                    if (current != track) {
+                        this.stop();
+                    }
+                    this.current = track;
+                    if (howl) {
                         howl.play();
-                    });
-                server.
-                    provide('track.info', {hash: hash})
-                    .then(function (xhr) {
-                        self.current.imgurl = xhr.data.data.imgurl.replace('{size}', 200);
-                    });
+                        this.paused = false;
+                    } else {
+                        server
+                            .provide('track.src', {hash: hash})
+                            .success(function (body) {
+                                var howl = new Howl({
+                                    urls: [body.url],
+                                    autoplay: false,
+                                    buffer: true
+                                });
+                                ['load', 'loaderror', 'play', 'pause', 'end'].forEach(function (event) {
+                                    howl.on(event, function () {
+                                        self.paused = event !== 'play';
+                                        $rootScope.$broadcast('player:' + event.toUpperCase(), track);
+                                    });
+                                });
+                                howls[hash] = howl;
+                                howl.play();
+                            })
+                            .error(function (data, status, headers, config) {
+                                $rootScope.$broadcast('player:SRCERROR', data, status, headers, config);
+                            });
+                        server.
+                            provide('track.info', {hash: hash})
+                            .success(function (body) {
+                                imgUrl = body.data.imgurl;
+                                if (imgUrl) {
+                                    self.current.imgurl = imgUrl.replace('{size}', 200);
+                                }
+                            })
+                            .error(function () {
+                                $rootScope.$broadcast('player:INFOERROR', data, status, headers, config);
+                            });
+                    }
+                } else {
+                    $rootScope.$broadcast('player:NOHASH', track);
+                }
+            } else {
+                if (current) {
+                    this.play(current)
+                } else {
+                    if (length > 0) {
+                        this.play(tracks[0]);
+                    } else {
+                        $rootScope.$broadcast('player:NOTRACK');
+                    }
+                }
             }
-//            if (current == track) {
-//                howls[current.hash].play();
-//            }
-            this.paused = false;
         },
         pause: function () {
             var current = this.current,
                 howls = this.howls,
-                hash = current.hash,
-                howl = howls[hash];
-            if (howl) {
-                howl.pause();
+                self = this,
+                howl, hash;
+            if (current) {
+                hash = current.hash;
+                if (hash) {
+                    howl = howls[hash];
+                    if (howl) {
+                        howl.pause();
+                        this.paused = true;
+                    } else {
+                        $rootScope.$on('player:LOAD', function () {
+                            self.pause();
+                        });
+                    }
+                }
             }
-            this.paused = true;
         },
         stop: function () {
             var current = this.current,
                 howls = this.howls,
-                hash = current.hash,
-                howl = howls[hash];
-            if (howl) {
-                howl.stop();
+                self = this,
+                howl, hash;
+            if (current) {
+                hash = current.hash;
+                if (hash) {
+                    howl = howls[hash];
+                    if (howl) {
+                        howl.stop();
+                        this.paused = true;
+                    } else {
+                        $rootScope.$on('player:LOAD', function () {
+                            self.stop();
+                        });
+                    }
+                }
             }
-            this.paused = true;
         }
     };
 }]);

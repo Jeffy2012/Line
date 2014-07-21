@@ -208,7 +208,7 @@ line.factory("server", ['$http', function ($http) {
                 data: {
                     keyword: '周杰伦',
                     page: 1,
-                    pagesize: 10
+                    pagesize: 15
                 }
             },
             ac: {
