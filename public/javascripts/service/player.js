@@ -37,7 +37,7 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
                     server
                         .provide('track.src', {hash: hash})
                         .success(function (body) {
-                            howls.urls(body.url);
+                            howl.urls(body.url);
                             howl.play();
                         })
                         .error(function (data, status, headers, config) {
@@ -90,10 +90,19 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
             }
         },
         pos: function () {
-            var current = this.current();
-            if (current && current.hash) {
-
+            var current = this.current,
+                howls = this.howls,
+                howl, hash;
+            if (current) {
+                hash = current.hash;
+                if (hash) {
+                    howl = howls[hash];
+                    if (howl) {
+                        return howl.pos.apply(howl, arguments);
+                    }
+                }
             }
+            return 0;
         }
     };
     ['mute', 'unmute', 'volume', 'codecs'].forEach(function (method) {

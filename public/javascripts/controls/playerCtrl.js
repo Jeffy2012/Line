@@ -36,14 +36,8 @@ line.controller('playerCtrl',
                 player.pause();
             };
             $interval(function () {
-                var current = player.current,
-                    howls = player.howls;
-                if (current) {
-                    var howl = howls[current.hash];
-                    if (howl) {
-                        $scope.progress = Math.ceil(howl.pos() * 100 / (current.duration || current.time / 1000));
-                    }
-                }
+                var current = player.current;
+                $scope.progress = Math.ceil(player.pos() * 100 / (current.duration || current.time / 1000));
             }, 16);
         }
     ]
