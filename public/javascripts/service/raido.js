@@ -1,20 +1,20 @@
 'use strict';
-line.factory("explorer", ['$rootScope', 'server', function ($rootScope, server) {
+line.factory("fms", ['$rootScope', 'server', function ($rootScope, server) {
     return {
-        results: [],
+        fms: [],
         query: {},
         totalPage: 0,
-        search: function (query) {
+        list: function (query) {
             var self = this;
             server
-                .provide('search.tracks', query)
+                .provider('fm.list', query)
                 .success(function (body, status, headers, config) {
-                    self.results = body.data.info;
+                    self.fms = body.data.info;
                     self.query = config.params;
-                    self.totalPage = Math.ceil(body.data.total / self.query.pagesize);
+                    self.totalPage = Math.ceil(body.recordcount / self.query.pagesize);
                 })
-                .error(function (data, status, headers, config) {
-                    $rootScope.$broadcast('explorer:SEARCHERROR', data, status, headers, config);
+                .error(function (body, status, headers, config) {
+                    $rootScope.$broadcast("fms:ERROR", body, status, headers, config);
                 });
         },
         next: function () {
@@ -22,7 +22,7 @@ line.factory("explorer", ['$rootScope', 'server', function ($rootScope, server) 
                 totalPage = this.totalPage,
                 current = query.page;
             if (current < totalPage) {
-                this.search(angular.extend(query, {
+                this.list(angular.extend(query, {
                     page: current + 1
                 }));
             }
@@ -31,13 +31,13 @@ line.factory("explorer", ['$rootScope', 'server', function ($rootScope, server) 
             var query = this.query,
                 current = query.page;
             if (current !== 1) {
-                this.search(angular.extend(query, {
+                this.list(angular.extend(query, {
                     page: current - 1
                 }));
             }
         },
         clear: function () {
-            this.results = [];
+            this.fms = [];
         }
     }
 }]);

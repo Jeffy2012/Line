@@ -37,48 +37,48 @@
                      data-ng-controller="playerCtrl">
                     <div class="col-lg-12 mb-20">
                         <div class="song-img"
-                             data-ng-class="{rotate: !playlist.paused}">
+                             data-ng-class="{rotate: !player.paused}">
                             <div class="center-big"></div>
                             <div class="center-small"></div>
                             <img class="src"
-                                 data-ng-src="{{playlist.current&&playlist.current.imgurl ? playlist.current.imgurl : '/images/line.png'}}"
+                                 data-ng-src="{{player.current&&player.current.imgurl ? player.current.imgurl : '/images/line.png'}}"
                                  alt=""/>
                         </div>
                     </div>
                     <div class="col-lg-3">
                         <div class="btn btn-default"
-                             data-ng-click="playlist.prev()">
+                             data-ng-click="prev()">
                             <span class="glyphicon glyphicon-backward"></span>
                         </div>
                     </div>
                     <div class="col-lg-3">
                         <div class="btn btn-default"
-                             data-ng-show="playlist.paused"
-                             data-ng-click="playlist.play()">
+                             data-ng-show="player.paused"
+                             data-ng-click="play()">
                             <span class="glyphicon glyphicon-play"></span>
                         </div>
                         <div class="btn btn-default"
-                             data-ng-show="!playlist.paused"
-                             data-ng-click="playlist.pause()">
+                             data-ng-show="!player.paused"
+                             data-ng-click="pause()">
                             <span class="glyphicon glyphicon-pause"></span>
                         </div>
                     </div>
                     <div class="col-lg-3">
                         <div class="btn btn-default"
-                             data-ng-click="playlist.stop()">
+                             data-ng-click="stop()">
                             <span class="glyphicon glyphicon-stop"></span>
                         </div>
                     </div>
                     <div class="col-lg-3">
                         <div class="btn btn-default"
-                             data-ng-click="playlist.next()">
+                             data-ng-click="next()">
                             <span class="glyphicon glyphicon-forward"></span>
                         </div>
                     </div>
                 </div>
                 <div class="playlist play-list-con" data-ng-controller="playlistCtrl">
                     <div class="bg-info clearfix playlist-item"
-                         data-ng-class="{'bg-info': playlist.current != track,'btn-primary': playlist.current == track}"
+                         data-ng-class="{'bg-info': !isPlaying(track),'btn-primary': isPlaying(track)}"
                          data-ng-repeat="track in playlist.tracks">
                         <div class="btn btn-default btn-xs btn-success play"
                              data-ng-click="play(track)">
@@ -125,6 +125,7 @@
 <script src="javascripts/vendor/angular/angular.js"></script>
 <script src="javascripts/line.js"></script>
 <script src="javascripts/service/server.js"></script>
+<script src="javascripts/service/player.js"></script>
 <script src="javascripts/service/playlist.js"></script>
 <script src="javascripts/service/explorer.js"></script>
 <script src="javascripts/controls/resultsCtrl.js"></script>

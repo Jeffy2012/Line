@@ -1,9 +1,9 @@
 'use strict';
-line.controller('progressCtrl', ['$scope', '$interval', 'playlist', function ($scope, $interval, playlist) {
+line.controller('progressCtrl', ['$scope', '$interval', 'player', function ($scope, $interval, player) {
     $scope.progress = 0;
     $interval(function () {
-        var current = playlist.current,
-            howls = playlist.howls;
+        var current = player.current,
+            howls = player.howls;
         if (current) {
             var howl = howls[current.hash];
             if (howl) {
