@@ -6,8 +6,9 @@ line.controller('playerCtrl', ['$scope', '$rootScope' , 'playlist', 'player', fu
         $scope.next();
     });
     $scope.play = function () {
-        if (player.current) {
-            player.play()
+        var current = playlist.current;
+        if (current.hash) {
+            player.play(current);
         } else {
             $scope.next();
         }
