@@ -49,7 +49,7 @@ line.controller('radioCtrl',
             $scope.next = function () {
                 $scope.listen(radio.fm);
             };
-            $rootScope.$on('end', function (track) {
+            $rootScope.$on('player:END', function (track) {
                 var fm = radio.fm,
                     hash = track.hash,
                     fmId = fm.fmid,

@@ -23,21 +23,21 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
                     howl.play();
                     this.paused = false;
                 } else {
+                    howl = new Howl({
+                        autoplay: false,
+                        buffer: true
+                    });
+                    ['load', 'loaderror', 'play', 'pause', 'end'].forEach(function (event) {
+                        howl.on(event, function () {
+                            self.paused = event !== 'play';
+                            $rootScope.$broadcast('player:' + event.toUpperCase(), track);
+                        });
+                    });
+                    howls[hash] = howl;
                     server
                         .provide('track.src', {hash: hash})
                         .success(function (body) {
-                            var howl = new Howl({
-                                urls: [body.url],
-                                autoplay: false,
-                                buffer: true
-                            });
-                            ['load', 'loaderror', 'play', 'pause', 'end'].forEach(function (event) {
-                                howl.on(event, function () {
-                                    self.paused = event !== 'play';
-                                    $rootScope.$broadcast('player:' + event.toUpperCase(), track);
-                                });
-                            });
-                            howls[hash] = howl;
+                            howls.urls(body.url);
                             howl.play();
                         })
                         .error(function (data, status, headers, config) {
@@ -88,6 +88,12 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
                     }
                 }
             }
+        },
+        pos: function () {
+            var current = this.current();
+            if (current && current.hash) {
+
+            }
         }
     };
     ['mute', 'unmute', 'volume', 'codecs'].forEach(function (method) {
@@ -95,7 +101,7 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
             return Howler[method].apply(Howler, arguments);
         }
     });
-    $rootScope.$on('play:LOAD', function (track) {
+    $rootScope.$on('player:LOAD', function (track) {
         var pIndex = pauseList.indexOf(track),
             sIndex = stopList.indexOf(track);
         if (pIndex !== -1) {
