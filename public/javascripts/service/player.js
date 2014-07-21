@@ -1,5 +1,7 @@
 'use strict';
 line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
+    var pauseList = [];
+    var stopList = [];
     var player = {
         howls: {},
         current: {},
@@ -13,7 +15,7 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
             hash = track.hash;
             if (hash) {
                 howl = howls[hash];
-                if (current && current.hash != hash) {
+                if (current && current.hash && current.hash !== hash) {
                     this.stop();
                 }
                 this.current = track;
@@ -60,7 +62,6 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
         pause: function () {
             var current = this.current,
                 howls = this.howls,
-                self = this,
                 howl, hash;
             if (current) {
                 hash = current.hash;
@@ -69,10 +70,6 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
                     if (howl) {
                         howl.pause();
                         this.paused = true;
-                    } else {
-                        $rootScope.$on('player:LOAD', function () {
-                            self.pause();
-                        });
                     }
                 }
             }
@@ -80,7 +77,6 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
         stop: function () {
             var current = this.current,
                 howls = this.howls,
-                self = this,
                 howl, hash;
             if (current) {
                 hash = current.hash;
@@ -89,10 +85,6 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
                     if (howl) {
                         howl.stop();
                         this.paused = true;
-                    } else {
-                        $rootScope.$on('player:LOAD', function () {
-                            self.stop();
-                        });
                     }
                 }
             }
@@ -101,6 +93,18 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
     ['mute', 'unmute', 'volume', 'codecs'].forEach(function (method) {
         player[method] = function () {
             return Howler[method].apply(Howler, arguments);
+        }
+    });
+    $rootScope.$on('play:LOAD', function (track) {
+        var pIndex = pauseList.indexOf(track),
+            sIndex = stopList.indexOf(track);
+        if (pIndex !== -1) {
+            player.howls[track.hash].pause();
+            pauseList.splice(pIndex, 1);
+        }
+        if (sIndex !== -1) {
+            player.howls[track.hash].stop();
+            stopList.splice(sIndex, 1);
         }
     });
     return player;

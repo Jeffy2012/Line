@@ -189,7 +189,7 @@ line.factory("server", ['$http', function ($http) {
             list: {
                 url: '/fetch/fms',
                 data: {
-                    page: 1,
+                    pageindex: 1,
                     pagesize: 10
                 }
             },
