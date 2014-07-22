@@ -2,131 +2,117 @@
 @import "variables";
 @import "bootstrap";
 @import "compass";
+@import "line";
 
-.container {
-  width: 768px;
+.mr-10 {
+  margin-right: 10px;
+}
+
+.mt-25 {
+  margin-top: 25px;
 }
 
 .mb-20 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-.line-header {
-  height: 40px;
-}
-
-.search, .player, .player-control {
-  margin-bottom: 20px;
-}
-
-.search {
-  margin-top: 20px;
-}
-
-.song-img {
-  display: table-cell;
-  position: relative;
-  vertical-align: middle;
-  height: 290px;
-  width: 290px;
-  border: 2px solid rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  @include border-radius(145px);
-  .center-big {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -50px;
-    margin-left: -50px;
-    width: 100px;
-    height: 100px;
-    @include border-radius(50%);
-    overflow: hidden;
-    background: RGBA(0, 0, 0, 0.3);
+#player {
+  height: 100px;
+  font-size: 0px;
+  width: 100%;
+  padding-left: 190px;
+  padding-right: 10px;
+  .player-right {
+    float: left;
+    height: 100%;
+    margin-left: -180px;
+    width: 180px;
   }
-  .center-small {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -15px;
-    margin-left: -15px;
-    width: 30px;
-    height: 30px;
-    @include border-radius(50%);
-    overflow: hidden;
-    background: #FFF;
-  }
-  img {
-    vertical-align: middle;
-    width: 286px;
-    height: auto;
-  }
-}
-
-@-webkit-keyframes rotate {
-  form {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-.rotate {
-  -webkit-animation: rotate 20s infinite;
-  animation: rotate 20s infinite;
-}
-
-.song-progress .progress {
-  height: 5px;
-  cursor: pointer;
-}
-
-.player-control {
-  .btn {
+  .player-left {
+    float: left;
+    height: 100%;
+    position: relative;
     width: 100%;
+    font-size: 14px;
+  }
+  .track-info {
+    height: 48px;
+  }
+  .duration, .current {
+    position: absolute;
+    top: 52px;
+  }
+  .duration {
+    color: $theme-color-yellow;
+    right: 0px;
+  }
+  .current {
+    color: $theme-color-blue;
+    left: 0px;
+  }
+  .progress {
+    background: $theme-color-yellow;
+    cursor: pointer;
+    height: 4px;
+    margin-bottom: 0;
+    .progress-bar {
+      background: $theme-color-blue;
+    }
+  }
+  .player-control {
+    background-color: $control-background-color;
+    border: $control-border-width solid $control-border-color;
+    @include border-radius($control-size/2);
+    color: $control-icon-color;
+    display: inline-block;
+    font-size: 16px;
+    height: $control-size;
+    line-height: $control-size - $control-border-width * 2;
+    overflow: hidden;
+    text-align: center;
+    width: $control-size;
+    &:hover {
+      border-color: $control-hover-border-color;
+      background-color: $control-hover-background-color;
+      color: $control-hover-icon-color;
+    }
   }
 }
 
-.playlist-item, .search-item {
-  margin-bottom: 2px;
-  padding: 10px;
-  line-height: 22px;
+#search {
+  margin: 10px;
+  .form-control {
+    max-width: 300px;
+  }
 }
 
-.playlist-item, .search-item {
-  &:hover {
+.track {
+  line-height: 22px;
+  padding: 10px;
+  margin-bottom: 3px;
+}
+
+#playlist {
+  float: left;
+  margin: 10px;
+  width: 370px;
+  .btn {
+    visibility: hidden;
+  }
+  .track:hover {
     .btn {
       visibility: visible;
     }
   }
-  .btn {
-    visibility: hidden;
+}
+
+.tracks {
+  float: right;
+  margin: 10px;
+  width: 370px;
+  .nav {
+    line-height: 30px;
+    text-align: center;
   }
 }
 
-.song-name {
-  padding-left: 10px;
-  display: inline-block;
-  width: 75%;
-  height: 23px;
-  line-height: 23px;
-  vertical-align: top;
-  @include ellipsis();
-}
-
-.result-name {
-  display: inline-block;
-  height: 22px;
-  width: 90%;
-  @include ellipsis();
-  line-height: 22px;
-  vertical-align: top;
-}
-
-.result-nav {
-  text-align: center;
-  line-height: 30px;
-}

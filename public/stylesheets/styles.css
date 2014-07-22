@@ -7891,165 +7891,138 @@ button.close {
     display: none !important;
   }
 }
-/* line 6, ../sass/styles.scss */
-.container {
-  width: 768px;
+/* line 7, ../sass/styles.scss */
+.mr-10 {
+  margin-right: 10px;
 }
 
-/* line 10, ../sass/styles.scss */
+/* line 11, ../sass/styles.scss */
+.mt-25 {
+  margin-top: 25px;
+}
+
+/* line 15, ../sass/styles.scss */
 .mb-20 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-/* line 14, ../sass/styles.scss */
-.line-header {
-  height: 40px;
-}
-
-/* line 18, ../sass/styles.scss */
-.search, .player, .player-control {
-  margin-bottom: 20px;
-}
-
-/* line 22, ../sass/styles.scss */
-.search {
-  margin-top: 20px;
-}
-
-/* line 26, ../sass/styles.scss */
-.song-img {
-  display: table-cell;
-  position: relative;
-  vertical-align: middle;
-  height: 290px;
-  width: 290px;
-  border: 2px solid rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  -webkit-border-radius: 145px;
-  -moz-border-radius: 145px;
-  -ms-border-radius: 145px;
-  -o-border-radius: 145px;
-  border-radius: 145px;
-}
-/* line 35, ../sass/styles.scss */
-.song-img .center-big {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -50px;
-  width: 100px;
+/* line 19, ../sass/styles.scss */
+#player {
   height: 100px;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-  border-radius: 50%;
-  overflow: hidden;
-  background: RGBA(0, 0, 0, 0.3);
+  font-size: 0px;
+  width: 100%;
+  padding-left: 190px;
+  padding-right: 10px;
 }
-/* line 47, ../sass/styles.scss */
-.song-img .center-small {
+/* line 25, ../sass/styles.scss */
+#player .player-right {
+  float: left;
+  height: 100%;
+  margin-left: -180px;
+  width: 180px;
+}
+/* line 31, ../sass/styles.scss */
+#player .player-left {
+  float: left;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  font-size: 14px;
+}
+/* line 38, ../sass/styles.scss */
+#player .track-info {
+  height: 48px;
+}
+/* line 41, ../sass/styles.scss */
+#player .duration, #player .current {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -15px;
-  margin-left: -15px;
-  width: 30px;
-  height: 30px;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-  border-radius: 50%;
+  top: 52px;
+}
+/* line 45, ../sass/styles.scss */
+#player .duration {
+  color: #f39800;
+  right: 0px;
+}
+/* line 49, ../sass/styles.scss */
+#player .current {
+  color: #28a7e1;
+  left: 0px;
+}
+/* line 53, ../sass/styles.scss */
+#player .progress {
+  background: #f39800;
+  cursor: pointer;
+  height: 4px;
+  margin-bottom: 0;
+}
+/* line 58, ../sass/styles.scss */
+#player .progress .progress-bar {
+  background: #28a7e1;
+}
+/* line 62, ../sass/styles.scss */
+#player .player-control {
+  background-color: white;
+  border: 3px solid #28a7e1;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
+  -o-border-radius: 25px;
+  border-radius: 25px;
+  color: #f39800;
+  display: inline-block;
+  font-size: 16px;
+  height: 50px;
+  line-height: 44px;
   overflow: hidden;
-  background: #FFF;
+  text-align: center;
+  width: 50px;
 }
-/* line 59, ../sass/styles.scss */
-.song-img img {
-  vertical-align: middle;
-  width: 286px;
-  height: auto;
-}
-
-@-webkit-keyframes rotate {
-  /* line 67, ../sass/styles.scss */
-  form {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-
-  /* line 71, ../sass/styles.scss */
-  to {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-/* line 77, ../sass/styles.scss */
-.rotate {
-  -webkit-animation: rotate 20s infinite;
-  animation: rotate 20s infinite;
+/* line 74, ../sass/styles.scss */
+#player .player-control:hover {
+  border-color: #f39800;
+  background-color: white;
+  color: #28a7e1;
 }
 
 /* line 82, ../sass/styles.scss */
-.song-progress .progress {
-  height: 5px;
-  cursor: pointer;
+#search {
+  margin: 10px;
+}
+/* line 84, ../sass/styles.scss */
+#search .form-control {
+  max-width: 300px;
 }
 
-/* line 88, ../sass/styles.scss */
-.player-control .btn {
-  width: 100%;
-}
-
-/* line 93, ../sass/styles.scss */
-.playlist-item, .search-item {
-  margin-bottom: 2px;
-  padding: 10px;
+/* line 89, ../sass/styles.scss */
+.track {
   line-height: 22px;
+  padding: 10px;
+  margin-bottom: 3px;
 }
 
-/* line 101, ../sass/styles.scss */
-.playlist-item:hover .btn, .search-item:hover .btn {
-  visibility: visible;
+/* line 95, ../sass/styles.scss */
+#playlist {
+  float: left;
+  margin: 10px;
+  width: 370px;
 }
-/* line 105, ../sass/styles.scss */
-.playlist-item .btn, .search-item .btn {
+/* line 99, ../sass/styles.scss */
+#playlist .btn {
   visibility: hidden;
 }
-
-/* line 110, ../sass/styles.scss */
-.song-name {
-  padding-left: 10px;
-  display: inline-block;
-  width: 75%;
-  height: 23px;
-  line-height: 23px;
-  vertical-align: top;
-  white-space: nowrap;
-  overflow: hidden;
-  -ms-text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
+/* line 103, ../sass/styles.scss */
+#playlist .track:hover .btn {
+  visibility: visible;
 }
 
-/* line 120, ../sass/styles.scss */
-.result-name {
-  display: inline-block;
-  height: 22px;
-  width: 90%;
-  white-space: nowrap;
-  overflow: hidden;
-  -ms-text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  line-height: 22px;
-  vertical-align: top;
+/* line 109, ../sass/styles.scss */
+.tracks {
+  float: right;
+  margin: 10px;
+  width: 370px;
 }
-
-/* line 129, ../sass/styles.scss */
-.result-nav {
-  text-align: center;
+/* line 113, ../sass/styles.scss */
+.tracks .nav {
   line-height: 30px;
+  text-align: center;
 }

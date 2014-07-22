@@ -1,24 +1,11 @@
 'use strict';
 line.controller('playerCtrl',
     [
-        '$scope', '$interval', 'playlist', 'radio', 'player',
-        function ($scope, $interval, playlist, radio, player) {
+        '$scope', '$interval', 'playlist', 'player',
+        function ($scope, $interval, playlist, player) {
             $scope.playlist = playlist;
             $scope.player = player;
             $scope.progress = 0;
-            $scope.$on('player:END', function (event, track) {
-                var fm = radio.fm,
-                    hash = track.hash,
-                    fmId = fm.fmid,
-                    item = radio.items[fmId],
-                    songs = item.songs;
-                if (fm && fm.fmid) {
-                    if (songs[0].hash == hash) {
-                        songs.shift();
-                        $scope.next();
-                    }
-                }
-            });
             $scope.play = function () {
                 var current = player.current || {};
                 if (current.hash) {
