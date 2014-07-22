@@ -5,7 +5,8 @@
     <title>Line</title>
     <link rel="stylesheet" href="/stylesheets/styles.css"/>
 </head>
-<body>
+<body
+        data-ng-controller="playerCtrl">
 <header class="navbar navbar-static-top line-header"
         data-ng-controller="radioCtrl">
     <button class="btn btn-default"
@@ -51,8 +52,7 @@
         </div>
     </div>
     <div class="player">
-        <div class="song-progress"
-             data-ng-controller="playerCtrl">
+        <div class="song-progress">
             <div class="progress">
                 <div class="progress-bar"
                      role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100"
@@ -62,8 +62,7 @@
         </div>
         <div class="row">
             <div class="col-lg-5">
-                <div class="row player-control"
-                     data-ng-controller="playerCtrl">
+                <div class="row player-control">
                     <div class="col-lg-12 mb-20">
                         <div class="song-img"
                              data-ng-class="{rotate: !player.paused}">

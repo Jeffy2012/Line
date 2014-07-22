@@ -8,7 +8,7 @@ line.controller('playlistCtrl',
                 player.play(track);
             };
             $scope.remove = function (track) {
-                if (track.hash = player.current.hash) {
+                if (track.hash == player.current.hash) {
                     $scope.next();
                 }
                 playlist.remove(track);

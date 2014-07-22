@@ -1,11 +1,11 @@
 'use strict';
 line.controller('radioCtrl',
     [
-        '$rootScope', '$scope', 'radio', 'player',
-        function ($rootScope, $scope, radio, player) {
+        '$scope', 'radio', 'player',
+        function ($scope, radio, player) {
             $scope.radio = radio;
             $scope.list = function (query) {
-                radio.list(query);
+                radio.turnOn(query);
             };
             $scope.listen = function (fm) {
                 radio.fm = fm;
@@ -49,19 +49,6 @@ line.controller('radioCtrl',
             $scope.next = function () {
                 $scope.listen(radio.fm);
             };
-            $rootScope.$on('player:END', function (track) {
-                var fm = radio.fm,
-                    hash = track.hash,
-                    fmId = fm.fmid,
-                    item = radio.items[fmId],
-                    songs = item.songs;
-                if (fm && fm.fmid) {
-                    if (songs[0].hash == hash) {
-                        songs.shift();
-                        $scope.next();
-                    }
-                }
-            });
         }
     ]
 );

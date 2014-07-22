@@ -1,21 +1,18 @@
 'use strict';
 line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
-    var pauseList = [];
-    var stopList = [];
+    var howls = {};
     var player = {
-        howls: {},
         current: {},
         paused: true,
         play: function (track) {
             track = track || {};
-            var current = this.current,
-                howls = this.howls,
+            var current = this.current || {},
                 self = this,
-                howl, hash, imgUrl;
-            hash = track.hash;
+                hash = track.hash,
+                howl = howls[hash],
+                imgUrl;
             if (hash) {
-                howl = howls[hash];
-                if (current && current.hash && current.hash !== hash) {
+                if (current.hash !== hash) {
                     this.stop();
                 }
                 this.current = track;
@@ -25,7 +22,10 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
                 } else {
                     howl = new Howl({
                         autoplay: false,
-                        buffer: true
+                        buffer: true,
+                        onend:function(){
+                            console.log('end');
+                        }
                     });
                     ['load', 'loaderror', 'play', 'pause', 'end'].forEach(function (event) {
                         howl.on(event, function () {
@@ -46,12 +46,14 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
                     server.
                         provide('track.info', {hash: hash})
                         .success(function (body) {
-                            imgUrl = body.data.imgurl;
-                            if (imgUrl) {
-                                self.current.imgurl = imgUrl.replace('{size}', 200);
+                            if(body.data){
+                                imgUrl = body.data.imgurl;
+                                if (imgUrl) {
+                                    self.current.imgurl = imgUrl.replace('{size}', 200);
+                                }
                             }
                         })
-                        .error(function () {
+                        .error(function (data, status, headers, config) {
                             $rootScope.$broadcast('player:INFOERROR', data, status, headers, config);
                         });
                 }
@@ -60,47 +62,29 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
             }
         },
         pause: function () {
-            var current = this.current,
-                howls = this.howls,
-                howl, hash;
-            if (current) {
-                hash = current.hash;
-                if (hash) {
-                    howl = howls[hash];
-                    if (howl) {
-                        howl.pause();
-                        this.paused = true;
-                    }
-                }
+            var current = this.current || {},
+                hash = current.hash,
+                howl = howls[hash];
+            if (howl) {
+                this.paused = true;
+                return howl.pause();
             }
         },
         stop: function () {
-            var current = this.current,
-                howls = this.howls,
-                howl, hash;
-            if (current) {
-                hash = current.hash;
-                if (hash) {
-                    howl = howls[hash];
-                    if (howl) {
-                        howl.stop();
-                        this.paused = true;
-                    }
-                }
+            var current = this.current || {},
+                hash = current.hash,
+                howl = howls[hash];
+            if (howl) {
+                this.paused = true;
+                return howl.stop();
             }
         },
         pos: function () {
-            var current = this.current,
-                howls = this.howls,
-                howl, hash;
-            if (current) {
-                hash = current.hash;
-                if (hash) {
-                    howl = howls[hash];
-                    if (howl) {
-                        return howl.pos.apply(howl, arguments);
-                    }
-                }
+            var current = this.current || {},
+                hash = current.hash,
+                howl = howls[hash];
+            if (howl) {
+                return howl.pos.apply(howl, arguments);
             }
             return 0;
         }
@@ -108,18 +92,6 @@ line.factory("player", ['$rootScope', 'server', function ($rootScope, server) {
     ['mute', 'unmute', 'volume', 'codecs'].forEach(function (method) {
         player[method] = function () {
             return Howler[method].apply(Howler, arguments);
-        }
-    });
-    $rootScope.$on('player:LOAD', function (track) {
-        var pIndex = pauseList.indexOf(track),
-            sIndex = stopList.indexOf(track);
-        if (pIndex !== -1) {
-            player.howls[track.hash].pause();
-            pauseList.splice(pIndex, 1);
-        }
-        if (sIndex !== -1) {
-            player.howls[track.hash].stop();
-            stopList.splice(sIndex, 1);
         }
     });
     return player;

@@ -1,8 +1,8 @@
 'use strict';
 line.factory("radio",
     [
-        '$rootScope', 'server', 'player',
-        function ($rootScope, server, player) {
+        'server',
+        function (server) {
             return {
                 fms: [],
                 query: {},

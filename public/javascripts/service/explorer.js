@@ -17,6 +17,14 @@ line.factory("explorer", ['$rootScope', 'server', function ($rootScope, server) 
                     $rootScope.$broadcast('explorer:SEARCHERROR', data, status, headers, config);
                 });
         },
+        autoComplete: function (query) {
+            var self = this;
+            server
+                .provide('search.ac', query)
+                .success(function () {
+
+                });
+        },
         next: function () {
             var query = this.query,
                 totalPage = this.totalPage,

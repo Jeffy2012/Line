@@ -221,7 +221,6 @@ line.factory("server", ['$http', function ($http) {
         }
     };
     return {
-        config: config,
         provide: function (key, query) {
             query = query || {};
             key = key.split('.');
