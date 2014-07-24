@@ -13,12 +13,12 @@ var line = angular.module('line', ['ngRoute'])
                 templateUrl: '/views/singer/tracks.html',
                 controller: 'singer.tracksCtrl'
             })
-            .when('/singer/albums/:singerId/:page?', {
+            .when('/singer/albums/:singerid/:page?', {
                 templateUrl: '/views/singer/albums.html',
                 controller: 'singer.albumsCtrl'
             })
-            .when('/albums/tracks/:albumId/:page?', {
-                templateUrl: '/views/singer/list.html',
+            .when('/albums/tracks/:albumid/:page?', {
+                templateUrl: '/views/singer/tracks.html',
                 controller: 'albums.tracksCtrl'
             });
     }]);
