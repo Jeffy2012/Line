@@ -33,8 +33,8 @@
         <div class="track-info">
             <span>周杰伦--威廉城堡</span>
         </div>
-        <span class="current">{{player.pos() || '00:00'}}</span>
-        <span class="duration">{{player.current.duration || '00:00'}}</span>
+        <span class="current">{{player.pos() | time}}</span>
+        <span class="duration">{{player.current.duration | time}}</span>
 
         <div class="progress">
             <div class="progress-bar"
@@ -56,7 +56,9 @@
         <input type="text" class="form-control" placeholder="歌词/歌手/拼音"
                data-ng-model="keyword"
                data-ng-keydown="search($event)"/>
+
     </div>
+    <a class="btn" href="/#/category">歌手</a>
 </div>
 <div id="playlist" data-ng-controller="playlistCtrl">
     <div class="bg-info clearfix track"
@@ -74,6 +76,7 @@
         </div>
     </div>
 </div>
+<div data-ng-view></div>
 <div class="tracks" data-ng-controller="explorerCtrl">
     <div class="nav mb-20 clearfix"
          data-ng-if="explorer.totalPage>1">
@@ -101,6 +104,7 @@
 <script src="javascripts/vendor/underscore.js"></script>
 <script src="javascripts/vendor/howler/howler.js"></script>
 <script src="javascripts/vendor/angular/angular.js"></script>
+<script src="javascripts/vendor/angular/angular-route.js"></script>
 <script src="javascripts/line.js"></script>
 <script src="javascripts/service/server.js"></script>
 <script src="javascripts/service/player.js"></script>
@@ -108,9 +112,14 @@
 <script src="javascripts/service/radio.js"></script>
 <script src="javascripts/service/radio.js"></script>
 <script src="javascripts/service/explorer.js"></script>
+<script src="javascripts/filters/time.js"></script>
 <script src="javascripts/controls/explorerCtrl.js"></script>
 <script src="javascripts/controls/playlistCtrl.js"></script>
 <script src="javascripts/controls/playerCtrl.js"></script>
 <script src="javascripts/controls/radioCtrl.js"></script>
+<script src="javascripts/controls/categoryCtrl.js"></script>
+<script src="javascripts/controls/listCtrl.js"></script>
+<script src="javascripts/controls/singer/albumsCtrl.js"></script>
+<script src="javascripts/controls/singer/tracksCtrl.js"></script>
 </body>
 </html>

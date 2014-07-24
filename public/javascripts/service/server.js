@@ -2,7 +2,7 @@
 line.factory("server", ['$http', function ($http) {
     var config = {
         singer: {
-            cate: {
+            category: {
                 url: 'http://mobilecdn.kugou.com/new/app/i/singer.php',
                 data: {
                     cmd: 100
@@ -13,7 +13,7 @@ line.factory("server", ['$http', function ($http) {
                 data: {
                     page: 1,
                     pagesize: 10,
-                    clasid: 12,
+                    classid: 12,
                     cmd: 101
                 }
             },
@@ -33,7 +33,7 @@ line.factory("server", ['$http', function ($http) {
                     cmd: 103
                 }
             },
-            album: {
+            albums: {
                 url: 'http://mobilecdn.kugou.com/new/app/i/singer.php',
                 data: {
                     page: 1,
