@@ -1,5 +1,5 @@
 'use strict';
-line.controller('radioCtrl',
+angular.module('line').controller('radioCtrl',
     [
         '$scope', 'radio', 'player',
         function ($scope, radio, player) {

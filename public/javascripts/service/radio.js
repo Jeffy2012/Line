@@ -1,5 +1,5 @@
 'use strict';
-line.factory("radio",
+angular     .module('line')     factory("radio",
     [
         'server',
         function (server) {

@@ -1,5 +1,5 @@
 'use strict';
-line.controller('singer.albumsCtrl', function ($scope, $routeParams, server) {
+angular     .module('line')     controller('singer.albumsCtrl', function ($scope, $routeParams, server) {
     $scope.albums = [];
     server
         .provide('singer.albums', $routeParams)

@@ -6,6 +6,54 @@
     <link rel="stylesheet" href="/stylesheets/styles.css"/>
 </head>
 <body>
+<div id="search" data-ng-controller='explorerCtrl'>
+    <div class="input-group">
+        <span class="input-group-btn" data-ng-click="search($event)">
+            <button class="btn btn-default" type="button">Search</button>
+        </span>
+        <input type="text" class="form-control" placeholder="歌词/歌手/拼音"
+               data-ng-model="query.keyword"
+               data-ng-keydown="search($event)"
+               data-typeahead-template-url="/views/autoComplete.html"
+               data-typeahead="item as item.keyword for item in ac($viewValue)"/>
+    </div>
+</div>
+<div data-ng-controller="playlistCtrl">
+    <div class="bg-info clearfix track"
+         data-ng-class="{'bg-info': !isPlaying(track),'btn-primary': isPlaying(track)}"
+         data-ng-repeat="track in playlist.tracks | orderObjectBy:'timestamp'">
+        <div class="btn btn-default btn-xs btn-success play"
+             data-ng-click="play(track)">
+            <span class="glyphicon glyphicon-play"></span>
+        </div>
+        <span class="song-name">{{track.filename}}</span>
+
+        <div class="btn btn-default btn-danger btn-xs pull-right remove"
+             data-ng-click="remove(track)">
+            <span class="glyphicon glyphicon-trash"></span>
+        </div>
+    </div>
+</div>
+<div data-ng-controller="resultsCtrl">
+    <pagination class="pagination-sm"
+                data-total-items="explorer.info.total"
+                data-ng-model="explorer.query.page"
+                data-max-size="10"
+                data-items-per-page="explorer.info.pagesize"
+                data-boundary-links="true"
+                data-rotate="false"
+                data-num-pages="totalPage"
+                data-ng-if="explorer.tracks.length>0"></pagination>
+    <div class="bg-info clearfix track"
+         data-ng-repeat="track in explorer.tracks">
+        <span class="result-name">{{track.filename}}</span>
+
+        <div class="btn btn-success btn-xs pull-right"
+             data-ng-click="add(track)">
+            <span class="glyphicon glyphicon-plus"></span>
+        </div>
+    </div>
+</div>
 <div id="player"
      class="navbar-fixed-bottom"
      data-ng-controller="playerCtrl">
@@ -31,7 +79,7 @@
     </div>
     <div class="player-left">
         <div class="track-info">
-            <span>周杰伦--威廉城堡</span>
+            <span>{{player.current.filename}}</span>
         </div>
         <span class="current">{{player.pos() | time}}</span>
         <span class="duration">{{player.current.duration | time}}</span>
@@ -48,79 +96,22 @@
         </div>
     </div>
 </div>
-<div id="search" data-ng-controller='explorerCtrl'>
-    <div class="input-group">
-        <span class="input-group-btn" data-ng-click="search($event)">
-            <button class="btn btn-default" type="button">Search</button>
-        </span>
-        <input type="text" class="form-control" placeholder="歌词/歌手/拼音"
-               data-ng-model="keyword"
-               data-ng-keydown="search($event)"/>
-
-    </div>
-    <a class="btn" href="/#/category">歌手</a>
-</div>
-<div id="playlist" data-ng-controller="playlistCtrl">
-    <div class="bg-info clearfix track"
-         data-ng-class="{'bg-info': !isPlaying(track),'btn-primary': isPlaying(track)}"
-         data-ng-repeat="track in playlist.tracks">
-        <div class="btn btn-default btn-xs btn-success play"
-             data-ng-click="play(track)">
-            <span class="glyphicon glyphicon-play"></span>
-        </div>
-        <span class="song-name">{{track.filename}}</span>
-
-        <div class="btn btn-default btn-danger btn-xs pull-right remove"
-             data-ng-click="remove(track)">
-            <span class="glyphicon glyphicon-trash"></span>
-        </div>
-    </div>
-</div>
-<div data-ng-view></div>
-<div class="tracks" data-ng-controller="explorerCtrl">
-    <div class="nav mb-20 clearfix"
-         data-ng-if="explorer.totalPage>1">
-        <button class="btn btn-primary btn-sm pull-left"
-                data-ng-disabled="explorer.query.page==1"
-                data-ng-click="explorer.prev()">上一页
-        </button>
-        <span>第{{explorer.query.page}}页，共{{explorer.totalPage}}页</span>
-        <button class="btn btn-primary pull-right btn-sm"
-                data-ng-disabled="explorer.total<=explorer.query.pagesize"
-                data-ng-click="explorer.next()">下一页
-        </button>
-    </div>
-    <div class="bg-info clearfix track"
-         data-ng-repeat="result in explorer.results">
-        <span class="result-name">{{result.filename}}</span>
-
-        <div class="btn btn-success btn-xs pull-right"
-             data-ng-click="add(result)">
-            <span class="glyphicon glyphicon-plus"></span>
-        </div>
-    </div>
-</div>
 <script src="javascripts/vendor/jquery/jquery-2.1.1.js"></script>
 <script src="javascripts/vendor/underscore.js"></script>
 <script src="javascripts/vendor/howler/howler.js"></script>
+<script src="javascripts/vendor/store/store.js"></script>
 <script src="javascripts/vendor/angular/angular.js"></script>
 <script src="javascripts/vendor/angular/angular-route.js"></script>
+<script src="javascripts/vendor/angular/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
 <script src="javascripts/line.js"></script>
+<script src="javascripts/filters/filters.js"></script>
 <script src="javascripts/service/server.js"></script>
+<script src="javascripts/service/explorer.js"></script>
 <script src="javascripts/service/player.js"></script>
 <script src="javascripts/service/playlist.js"></script>
-<script src="javascripts/service/radio.js"></script>
-<script src="javascripts/service/radio.js"></script>
-<script src="javascripts/service/explorer.js"></script>
-<script src="javascripts/filters/time.js"></script>
-<script src="javascripts/controls/explorerCtrl.js"></script>
-<script src="javascripts/controls/playlistCtrl.js"></script>
 <script src="javascripts/controls/playerCtrl.js"></script>
-<script src="javascripts/controls/radioCtrl.js"></script>
-<script src="javascripts/controls/categoryCtrl.js"></script>
-<script src="javascripts/controls/listCtrl.js"></script>
-<script src="javascripts/controls/singer/albumsCtrl.js"></script>
-<script src="javascripts/controls/singer/tracksCtrl.js"></script>
-<script src="javascripts/controls/albums.tracksCtrl.js"></script>
+<script src="javascripts/controls/playlistCtrl.js"></script>
+<script src="javascripts/controls/explorerCtrl.js"></script>
+<script src="javascripts/controls/resultsCtrl.js"></script>
 </body>
 </html>

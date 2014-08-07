@@ -1,22 +1,27 @@
 'use strict';
-line.controller('explorerCtrl',
-    [
-        '$scope', 'explorer', 'playlist', 'player',
-        function ($scope, explorer, playlist, player) {
-            $scope.explorer = explorer;
-            $scope.search = function (e) {
-                var keyword = $scope.keyword;
-                if (keyword && (e.type == 'click' || e.which == 13)) {
-                    explorer.search({keyword: $scope.keyword});
-                }
-            };
-            $scope.add = function (track) {
-                playlist.add(track);
-                var current = player.current;
-                if (current && !current.hash) {
-                    player.play(track);
+angular
+    .module('line')
+    .controller('explorerCtrl',
+    function ($scope, explorer) {
+        $scope.explorer = explorer;
+        $scope.query = {
+            page: 1
+        };
+        $scope.search = function (e) {
+            if (e.type === 'click' || e.which === 13) {
+                var keyword = $scope.query.keyword;
+                if (keyword) {
+                    explorer.search($scope.query);
                 }
             }
-        }
-    ]
-);
+        };
+        $scope.ac = function (val) {
+            return explorer.ac({keyword: val});
+        };
+        $scope.$watch('explorer.query.page', function (newVal, oldVal) {
+            console.log(newVal, oldVal);
+            if (oldVal && newVal) {
+                explorer.search();
+            }
+        });
+    });
