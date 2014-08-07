@@ -19,7 +19,6 @@ angular
             return explorer.ac({keyword: val});
         };
         $scope.$watch('explorer.query.page', function (newVal, oldVal) {
-            console.log(newVal, oldVal);
             if (oldVal && newVal) {
                 explorer.search();
             }

@@ -116,7 +116,19 @@
   }
 }
 
-.dropdown-menu{
+.dropdown-menu {
   width: 300px;
+}
+
+.krc {
+  p {
+    text-align: center;
+    @include single-transition(font-size, 0.5s, ease-in);
+  }
+  .active {
+    font-size: 18px;
+    color: red;
+
+  }
 }
 

@@ -1,25 +1,29 @@
 'use strict';
 angular
     .module('line')
-    .factory('explorer', function (server) {
+    .factory('explorer', function (server, tracks) {
         return {
-            tracks: [],
             query: {},
-            info: {},
             search: function (query) {
                 var self = this;
                 if (query) {
-                    self.query = query;
-                } else {
-                    query = self.query;
+                    if (query.keyword) {
+                        self.query = query;
+                        tracks.fetch = function (page) {
+                            self.search({page: page});
+                        };
+                    } else {
+                        angular.extend(self.query, query);
+                    }
+                    server
+                        .provide('search.tracks', query)
+                        .success(function (body, status, headers, config) {
+                            tracks.data = body.data.info;
+                            tracks.info.pagesize = config.params.pagesize;
+                            tracks.info.total = body.data.total;
+                            tracks.info.page = config.params.page
+                        });
                 }
-                server
-                    .provide('search.tracks', query)
-                    .success(function (body, status, headers, config) {
-                        self.tracks = body.data.info;
-                        self.info.pagesize = config.params.pagesize;
-                        self.info.total = body.data.total;
-                    });
             },
             ac: function (query) {
                 return server
@@ -30,9 +34,6 @@ angular
                             }
                         );
                     });
-            },
-            clear: function () {
-                this.tracks = [];
             }
         };
     });

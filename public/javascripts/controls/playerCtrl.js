@@ -5,7 +5,6 @@ angular
     function ($scope, $interval, playlist, player) {
         $scope.playlist = playlist;
         $scope.player = player;
-        $scope.progress = 0;
         $scope.play = function () {
             var current = player.current || {};
             if (current.hash) {
@@ -26,16 +25,19 @@ angular
                 player.play(track);
             }
         };
+        $scope.pos = function (event) {
+            var current = player.current || {},
+                duration = current.duration || 0,
+                width = $(event.currentTarget).width(),
+                offsetX = event.offsetX;
+            player.pos(Math.floor(offsetX / width * duration));
+        };
         $scope.stop = function () {
             player.stop();
         };
         $scope.pause = function () {
             player.pause();
         };
-        $interval(function () {
-            var current = player.current || {};
-            $scope.progress = Math.ceil(player.pos() * 100 / (current.duration || current.time / 1000));
-        }, 16);
         $scope.$on('player:END', function () {
             $scope.next();
         });

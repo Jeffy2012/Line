@@ -34,18 +34,19 @@
         </div>
     </div>
 </div>
-<div data-ng-controller="resultsCtrl">
+<div data-ng-controller="tracksCtrl">
     <pagination class="pagination-sm"
-                data-total-items="explorer.info.total"
-                data-ng-model="explorer.query.page"
-                data-max-size="10"
-                data-items-per-page="explorer.info.pagesize"
+                data-total-items="tracks.info.total"
+                data-ng-model="tracks.info.page"
+                data-max-size="tracks.info.maxSize"
+                data-items-per-page="tracks.info.pagesize"
                 data-boundary-links="true"
                 data-rotate="false"
                 data-num-pages="totalPage"
-                data-ng-if="explorer.tracks.length>0"></pagination>
+                data-ng-show="totalPage > 1"
+                data-ng-if="tracks.data.length > 0"></pagination>
     <div class="bg-info clearfix track"
-         data-ng-repeat="track in explorer.tracks">
+         data-ng-repeat="track in tracks.data">
         <span class="result-name">{{track.filename}}</span>
 
         <div class="btn btn-success btn-xs pull-right"
@@ -53,6 +54,10 @@
             <span class="glyphicon glyphicon-plus"></span>
         </div>
     </div>
+</div>
+<div data-ng-controller="krcCtrl" class="krc">
+    <p data-ng-repeat="point in player.krc.points"
+       data-ng-class="{active : $index == player.krc.active}">{{player.krc[point]}}</p>
 </div>
 <div id="player"
      class="navbar-fixed-bottom"
@@ -79,19 +84,18 @@
     </div>
     <div class="player-left">
         <div class="track-info">
+            <img data-ng-src="{{player.current.imgurl.replace('{size}',80)}}" alt="" width="48"/>
             <span>{{player.current.filename}}</span>
         </div>
-        <span class="current">{{player.pos() | time}}</span>
+        <span class="current">{{player.currentTime | time}}</span>
         <span class="duration">{{player.current.duration | time}}</span>
 
-        <div class="progress">
+        <div class="progress" data-ng-click="pos($event)">
             <div class="progress-bar"
                  role="progressbar"
-                 aria-valuenow="{{progress}}"
                  aria-valuemin="0"
                  aria-valuemax="100"
-                 style="width: 40%"
-                 data-ng-style="{width: progress + '%'}">
+                 data-ng-style="{width: player.progress + '%'}">
             </div>
         </div>
     </div>
@@ -108,10 +112,12 @@
 <script src="javascripts/service/server.js"></script>
 <script src="javascripts/service/explorer.js"></script>
 <script src="javascripts/service/player.js"></script>
+<script src="javascripts/service/tracks.js"></script>
 <script src="javascripts/service/playlist.js"></script>
 <script src="javascripts/controls/playerCtrl.js"></script>
 <script src="javascripts/controls/playlistCtrl.js"></script>
 <script src="javascripts/controls/explorerCtrl.js"></script>
-<script src="javascripts/controls/resultsCtrl.js"></script>
+<script src="javascripts/controls/tracksCtrl.js"></script>
+<script src="javascripts/controls/krcCtrl.js"></script>
 </body>
 </html>
