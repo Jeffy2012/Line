@@ -243,6 +243,24 @@ angular
                     config.method = 'GET';
                 }
                 return $http(config);
+            },
+            collectTrackInfo: function (track) {
+                return this.
+                    provide('track.info', {
+                        hash: track.hash
+                    }).then(function (res) {
+                        var info = res.data.data;
+                        info = _.pick(info, [
+                            'singerid',
+                            'songname',
+                            'choricsinger',
+                            'songname',
+                            'intro',
+                            'imgurl'
+                        ]);
+                        angular.extend(track, info);
+                        return track;
+                    });
             }
         };
     });

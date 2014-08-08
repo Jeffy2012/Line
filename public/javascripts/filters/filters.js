@@ -3,7 +3,7 @@ angular
     .module('line')
     .filter('time', function () {
         return function (input) {
-            input = parseInt(input);
+            input = parseInt(input, 10);
             if (!input) {
                 return '00:00';
             } else {
@@ -33,5 +33,12 @@ angular
                 filtered.reverse();
             }
             return filtered;
+        };
+    })
+    .filter('size', function () {
+        return function (input, size) {
+            if (input) {
+                return input.replace('{size}', size);
+            }
         };
     });

@@ -1,20 +1,30 @@
 'use strict';
+//'filename',
+//'duration',
+//'hash',
+//'singername'
+//'singerid',
+//'songname',
+//'choricsinger',
+//'songname',
+//'intro',
+//'imgurl'
+//filesize
 angular
     .module('line').
     factory('playlist',
     function (player, server) {
         var tracks = store.getAll();
 
-        function _deal() {
-            this.hashes = _.sortBy(_.values(tracks), function (track) {
-                return track.timestamp;
-            }).map(function (track) {
-                return track.hash;
-            });
-        }
-
         var playlist = {
             tracks: tracks,
+            _deal: function () {
+                this.hashes = _.sortBy(_.values(tracks), function (track) {
+                    return track.timestamp;
+                }).map(function (track) {
+                    return track.hash;
+                });
+            },
             add: function (track) {
                 track = track || {};
                 var tracks = this.tracks,
@@ -30,26 +40,13 @@ angular
                     ]);
                     track.filesize = filesize;
                     track.timestamp = Date.now();
-                    server.
-                        provide('track.info', {hash: hash})
-                        .success(function (body) {
-                            var info = body.data;
-                            info = _.pick(info, [
-                                'singerid',
-                                'songname',
-                                'choricsinger',
-                                'songname',
-                                'intro',
-                                'imgurl'
-                            ]);
-                            angular.extend(track, info);
+                    server
+                        .collectTrackInfo(track)
+                        .then(function () {
                             store.set(hash, track);
-                        })
-                        .error(function (data, status, headers, config) {
-
                         });
                     tracks[hash] = track;
-                    _deal.call(playlist);
+                    this._deal();
                     return track;
                 }
                 return false;
@@ -62,7 +59,7 @@ angular
                 if (hash && exist) {
                     store.remove(hash);
                     delete  tracks[hash];
-                    _deal.call(playlist);
+                    this._deal();
                     return track;
                 }
                 return false;
@@ -112,6 +109,6 @@ angular
                 return tracks[trackHash];
             }
         };
-        _deal.call(playlist);
+        playlist._deal();
         return playlist;
     });

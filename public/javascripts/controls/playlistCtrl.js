@@ -5,6 +5,15 @@ angular
     function ($scope, playlist, player) {
         $scope.playlist = playlist;
         $scope.play = function (track) {
+            if (player.type !== 'PLAYLIST') {
+                player.next = function () {
+                    $scope.next();
+                };
+                player.prev = function () {
+                    $scope.prev();
+                };
+                player.type = 'PLAYLIST';
+            }
             player.play(track);
         };
         $scope.remove = function (track) {
@@ -14,13 +23,17 @@ angular
                     player.play(nextTrack);
                 }
                 $scope.remove(track);
-            }else{
+            } else {
                 playlist.remove(track);
             }
         };
-        $scope.isPlaying = function (track) {
-            var current = player.current;
-            return current && track && current.hash && track.hash && track.hash === current.hash;
+        $scope.next = function () {
+            var track = playlist.next();
+            $scope.play(track);
+        };
+        $scope.prev = function () {
+            var track = playlist.prev();
+            $scope.play(track);
         };
     });
   

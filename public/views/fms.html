@@ -1,0 +1,14 @@
+<div data-ng-controller="radioCtrl">
+    <button class="btn btn-default"
+            data-ng-click="list()">电台
+    </button>
+    <div class="bg-info clearfix track"
+         data-ng-repeat="fm in radio.fms">
+        <span class="result-name">{{fm.fmname}}</span>
+
+        <div class="btn btn-success btn-xs pull-right"
+             data-ng-click="tuneTo(fm)">
+            <span class="glyphicon glyphicon-plus"></span>
+        </div>
+    </div>
+</div>
