@@ -27,12 +27,25 @@ angular
                 playlist.remove(track);
             }
         };
+        $scope.isPlaying = function (track) {
+            return track.hash === (player.current || {}).hash;
+        };
         $scope.next = function () {
-            var track = playlist.next();
+            var track, mode = player.mode;
+            if (mode === 'RANDOM') {
+                track = playlist.random();
+            } else if (mode === 'NORMAL') {
+                track = playlist.next();
+            }
             $scope.play(track);
         };
         $scope.prev = function () {
-            var track = playlist.prev();
+            var track, mode = player.mode;
+            if (mode === 'RANDOM') {
+                track = playlist.random();
+            } else if (mode === 'NORMAL') {
+                track = playlist.prev();
+            }
             $scope.play(track);
         };
     });

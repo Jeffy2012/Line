@@ -6,7 +6,9 @@ angular
         $scope.add = function (track) {
             tracks.addToPlaylist(track);
         };
-        $scope.$watch('tracks.info.page', function (page) {
-            tracks.fetch(page);
+        $scope.$watch('tracks.info.page', function (newVal, oldVal) {
+            if (oldVal && newVal && newVal !== oldVal) {
+                tracks.fetch(newVal);
+            }
         });
     });

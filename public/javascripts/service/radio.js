@@ -4,7 +4,9 @@ angular
     .factory('radio', function (server) {
         return {
             fms: {},
-            info: {},
+            info: {
+                maxSize: 5
+            },
             query: {},
             current: {},
             _parse: function (offset) {
@@ -23,8 +25,13 @@ angular
                 server
                     .provide('fm.list', query)
                     .then(function (res) {
-                        var info = res.data.data;
-                        info.forEach(function (fm) {
+                        self.fms = {};
+                        var body = res.data,
+                            data = body.data,
+                            info = self.info;
+                        info.total = body.recordcount;
+                        info.pagesize = res.config.params.pagesize;
+                        data.forEach(function (fm) {
                             var tracksData = fm.fmSongData[0],
                                 fmData = _.pick(fm, [
                                     'fmid',
@@ -35,8 +42,10 @@ angular
                                     'imgurl'
                                 ]);
                             fmData.offset = self._parse(tracksData.offset);
-                            fmData.tracks = tracksData.songs.map(self._format);
-                            self.fms[fm.fmid] = fmData;
+                            if (tracksData.songs) {
+                                fmData.tracks = tracksData.songs.map(self._format);
+                                self.fms[fm.fmid] = fmData;
+                            }
                         });
                     });
             },

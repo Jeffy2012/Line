@@ -14,7 +14,7 @@ angular
         }
 
         function split(obj) {
-            var patter = /\[(\d+:\d+\.\d+)\]/ig;
+            var patter = /\[.*(\d+:\d+\.\d+)\]/ig;
             var result;
             var data = {};
             for (var key in obj) {
@@ -47,111 +47,133 @@ angular
             return krc;
         }
 
+        var stopQueue = [];
+        var pauseQueue = [];
         var howls = $cacheFactory('howlCache');
         var krcCache = $cacheFactory('krcCache');
         var player = {
+            //type: 'PLAYLIST', // 'FM'
+            mode: 'NORMAL', // 'RANDOM' 'LOOP'
             current: {},
             krc: {},
             currentTime: 0,
             progress: 0,
-            paused: true,
             play: function (track) {
-                track = track || {};
                 var self = this,
-                    current = self.current || {},
-                    hash = track.hash,
-                    howl = howls.get(hash);
-                if (hash) {
-                    if (current.hash !== hash) {
+                    current = this.current || {},
+                    currentHash = current.hash,
+                    hash,
+                    howl;
+                if (track) {
+                    hash = track.hash;
+                    if (hash) {
                         this.stop();
-                    }
-                    this.current = track;
-                    self.setUpKrc();
-                    if (!howl) {
-                        howls.put(hash, howl);
-                        server
-                            .provide('track.src', {hash: hash})
-                            .success(function (body) {
-                                howl = new Howl({
-                                    src: body.url,
-                                    html5: true
-                                });
-                                ['load', 'loaderror', 'play', 'pause', 'end', 'faded'].forEach(function (event) {
-                                    howl.on(event, function () {
-                                        $rootScope.$broadcast('player:' + event.toUpperCase(), track);
+                        this.current = track;
+                        this._setUpKrc();
+                        howl = howls.get(hash);
+                        if (howl) {
+                            howl.play();
+                        } else {
+                            server
+                                .provide('track.src', {hash: hash})
+                                .then(function (res) {
+                                    howl = new Howl({
+                                        src: res.data.url,
+                                        html5: true,
+                                        preload: false
                                     });
+                                    howls.put(hash, howl);
+                                    ['load', 'loaderror', 'play', 'pause', 'end', 'faded'].forEach(function (event) {
+                                        howl.on(event, function () {
+                                            $rootScope.$broadcast('player:' + event.toUpperCase(), howl);
+                                        });
+                                    });
+                                    howl.play();
                                 });
-                                howls.put(hash, howl);
-                                howl.play();
-                            })
-                            .error(function () {
-
-                            });
-                    } else {
-                        howl.play();
+                        }
                     }
-                    this.paused = false;
+                } else {
+                    if (currentHash) {
+                        howl = howls.get(currentHash);
+                        if (howl) {
+                            howl.play();
+                        } else {
+                            this.play(current);
+                        }
+                    }
                 }
+                return this;
             },
             pause: function () {
                 var current = this.current || {},
                     hash = current.hash,
                     howl = howls.get(hash);
-                if (howl) {
-                    return howl.pause();
+                if (hash) {
+                    if (howl) {
+                        howl.pause();
+                    } else {
+                        //todo
+                        pauseQueue.push(hash);
+                    }
                 }
-            },
-            playing: function () {
-                var current = this.current || {},
-                    hash = current.hash,
-                    howl = howls.get(hash);
-                if (howl) {
-                    var _soundIds = howl._getSoundIds();
-                    return howl.playing(_soundIds[0]);
-                }
-                return false;
+                return this;
             },
             stop: function () {
                 var current = this.current || {},
                     hash = current.hash,
                     howl = howls.get(hash);
-                if (howl) {
-                    return howl.stop();
+                if (hash) {
+                    if (howl) {
+                        howl.stop();
+                    } else {
+                        //todo
+                        stopQueue.push(hash);
+                    }
                 }
+                return this;
+            },
+            playing: function () {
+                var current = this.current || {},
+                    hash = current.hash,
+                    howl = howls.get(hash);
+                if (hash && howl) {
+                    var _soundIds = howl._getSoundIds();
+                    return howl.playing(_soundIds[0]);
+                }
+                return false;
             },
             seek: function () {
                 var current = this.current || {},
                     hash = current.hash,
                     howl = howls.get(hash);
-                if (howl) {
+                if (hash && howl) {
                     return howl.seek.apply(howl, arguments);
                 }
                 return 0;
             },
+            //todo
             fade: function () {
 
             },
-            setUpKrc: function () {
+            _setUpKrc: function () {
                 var self = this,
                     current = this.current || {},
                     hash = current.hash,
-                    krc = krcCache.get(hash);
+                    keyword = current.filename,
+                    krc = krcCache.get(hash),
+                    timelength = current.duration;
                 if (krc) {
                     this.krc = krc;
-                } else {
+                } else if (hash && keyword && timelength) {
                     server
                         .provide('track.krc', {
-                            keyword: current.filename,
-                            hash: current.hash,
-                            timelength: current.duration
-                        })
-                        .success(function (body) {
-                            krc = parseLrc(body);
+                            keyword: keyword,
+                            hash: hash,
+                            timelength: timelength
+                        }).then(function (res) {
+                            krc = parseLrc(res.data);
                             self.krc = krc;
                             krcCache.put(hash, krc);
-                        })
-                        .error(function () {
-                            self.krc = {};
                         });
                 }
             }
@@ -167,12 +189,14 @@ angular
                 points = krc.points,
                 duration = current.duration,
                 currentTime;
-            player.currentTime = currentTime = player.seek();
-            if (duration) {
-                player.progress = currentTime * 100 / duration;
-            }
-            if (points) {
-                krc.active = _.sortedIndex(points, currentTime) - 1;
+            if (current.hash) {
+                player.currentTime = currentTime = player.seek();
+                if (duration) {
+                    player.progress = currentTime * 100 / duration;
+                }
+                if (points) {
+                    krc.active = _.sortedIndex(points, currentTime) - 1;
+                }
             }
         }, 100);
         return player;

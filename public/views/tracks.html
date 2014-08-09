@@ -1,0 +1,24 @@
+<div class="tracks">
+    <div class="bg-info clearfix track"
+         data-ng-repeat="track in tracks.data">
+        <span class="track-name">{{track.filename}}</span>
+        <span class="track-duration pull-right">{{track.duration | time}}</span>
+        <button class="btn btn-success btn-xs pull-right"
+                data-ng-click="add(track)">
+            <span class="glyphicon glyphicon-plus"></span>
+        </button>
+    </div>
+    <div class="nav">
+        <div class="pagination-sm"
+             data-pagination
+             data-total-items="tracks.info.total"
+             data-ng-model="tracks.info.page"
+             data-max-size="tracks.info.maxSize"
+             data-items-per-page="tracks.info.pagesize"
+             data-boundary-links="true"
+             data-rotate="false"
+             data-num-pages="totalPage"
+             data-ng-show="totalPage > 1"
+             data-ng-if="tracks.data.length > 0"></div>
+    </div>
+</div>

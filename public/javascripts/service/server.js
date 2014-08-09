@@ -192,7 +192,7 @@ angular
                     url: '/fetch/fms',
                     params: {
                         pageindex: 1,
-                        pagesize: 10
+                        pagesize: 15
                     }
                 },
                 tracks: {
@@ -242,6 +242,7 @@ angular
                     }
                     config.method = 'GET';
                 }
+                config.cache = true;
                 return $http(config);
             },
             collectTrackInfo: function (track) {
@@ -250,15 +251,17 @@ angular
                         hash: track.hash
                     }).then(function (res) {
                         var info = res.data.data;
-                        info = _.pick(info, [
-                            'singerid',
-                            'songname',
-                            'choricsinger',
-                            'songname',
-                            'intro',
-                            'imgurl'
-                        ]);
-                        angular.extend(track, info);
+                        if (info) {
+                            info = _.pick(info, [
+                                'singerid',
+                                'singername',
+                                'choricsinger',
+                                'songname',
+                                'intro',
+                                'imgurl'
+                            ]);
+                            angular.extend(track, info);
+                        }
                         return track;
                     });
             }

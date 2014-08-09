@@ -1,0 +1,6 @@
+<div class="krc"
+     data-ng-controller="krcCtrl">
+    <p id="krc-point-{{$index}}"
+       data-ng-repeat="point in player.krc.points"
+       data-ng-class="{active : $index == player.krc.active}">{{player.krc[point]}}</p>
+</div>

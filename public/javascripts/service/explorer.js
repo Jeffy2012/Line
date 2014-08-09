@@ -4,25 +4,30 @@ angular
     .factory('explorer', function (server, tracks) {
         return {
             query: {},
+            _search: function (page) {
+                var self = this;
+                server
+                    .provide('search.tracks', angular.extend(self.query, {page: page}))
+                    .success(function (body, status, headers, config) {
+                        tracks.data = body.data.info;
+                        tracks.info.pagesize = config.params.pagesize;
+                        tracks.info.total = body.data.total;
+                        tracks.info.page = config.params.page
+                    });
+            },
             search: function (query) {
                 var self = this;
                 if (query) {
                     if (query.keyword) {
+                        if (!query.page) {
+                            query.page = 1;
+                        }
                         self.query = query;
                         tracks.fetch = function (page) {
-                            self.search({page: page});
+                            self._search(page);
                         };
-                    } else {
-                        angular.extend(self.query, query);
+                        self._search(1);
                     }
-                    server
-                        .provide('search.tracks', query)
-                        .success(function (body, status, headers, config) {
-                            tracks.data = body.data.info;
-                            tracks.info.pagesize = config.params.pagesize;
-                            tracks.info.total = body.data.total;
-                            tracks.info.page = config.params.page
-                        });
                 }
             },
             ac: function (query) {

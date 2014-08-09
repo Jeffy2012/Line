@@ -39,6 +39,8 @@ angular
         return function (input, size) {
             if (input) {
                 return input.replace('{size}', size);
+            } else {
+                return '/images/line.png'
             }
         };
     });

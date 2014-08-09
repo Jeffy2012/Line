@@ -1,10 +1,6 @@
 'use strict';
 angular.module('line').controller('radioCtrl',
     function ($scope, radio, player) {
-        $scope.radio = radio;
-        $scope.list = function (query) {
-            radio.list(query);
-        };
         $scope.tuneTo = function (fm) {
             var track = radio.tuneTo(fm);
             $scope.play(track);
@@ -14,7 +10,7 @@ angular.module('line').controller('radioCtrl',
                 player.next = function () {
                     $scope.next();
                 };
-                player.prev = 'disabled';
+                player.prev = angular.noop;
                 player.type = 'FM';
             }
             player.play(track);
@@ -23,4 +19,7 @@ angular.module('line').controller('radioCtrl',
             var track = radio.next();
             $scope.play(track);
         };
+        $scope.$watch('radio.info.page', function (page) {
+            radio.list({pageindex: page});
+        })
     });

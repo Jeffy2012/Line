@@ -1,0 +1,18 @@
+<div class="playlist"
+     data-ng-controller="playlistCtrl">
+    <div class="track"
+         data-ng-class="{'bg-info': !isPlaying(track),'btn-primary': isPlaying(track)}"
+         data-ng-repeat="track in playlist.tracks | orderObjectBy:'timestamp'">
+        <button class="btn btn-xs btn-success"
+                data-ng-click="play(track)">
+            <span class="glyphicon glyphicon-play"></span>
+        </button>
+        <span class="track-name">{{track.filename}}</span>
+        <span class="track-duration pull-right">{{track.duration | time}}</span>
+
+        <button class="btn btn-xs btn-danger pull-right"
+                data-ng-click="remove(track)">
+            <span class="glyphicon glyphicon-trash"></span>
+        </button>
+    </div>
+</div>

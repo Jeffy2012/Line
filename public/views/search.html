@@ -1,0 +1,13 @@
+<div class="search"
+     data-ng-controller="explorerCtrl">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="歌词/歌手/拼音"
+               data-ng-model="keyword"
+               data-ng-keydown="search($event)"
+               data-typeahead-template-url="/views/autoComplete.html"
+               data-typeahead="item as item.keyword for item in ac($viewValue)"/>
+       <span class="input-group-btn" data-ng-click="search($event)">
+            <button class="btn btn-default" type="button">Search</button>
+       </span>
+    </div>
+</div>

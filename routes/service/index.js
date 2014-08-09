@@ -25,7 +25,15 @@ function fetch(key, query) {
 Object.keys(config).forEach(function (key) {
     router.get('/' + key, function (req, res) {
         fetch(key, req.query).done(function (data) {
-            var method = key == 'krc' ? 'end' : 'json';
+            var method;
+            if (key === 'krc') {
+                method = 'end';
+                if (/^\s*(\[|\{[^\{])/.test(data) && /[\}\]]\s*$/.test(data)) {
+                    data += 'END';
+                }
+            } else {
+                method = 'json';
+            }
             res[method](data);
         });
     });
