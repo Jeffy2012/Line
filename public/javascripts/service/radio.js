@@ -44,8 +44,10 @@ angular
                             fmData.offset = self._parse(tracksData.offset);
                             if (tracksData.songs) {
                                 fmData.tracks = tracksData.songs.map(self._format);
-                                self.fms[fm.fmid] = fmData;
+                            } else {
+                                fmData.tracks = [];
                             }
+                            self.fms[fm.fmid] = fmData;
                         });
                     });
             },
@@ -74,11 +76,12 @@ angular
                 var self = this,
                     fms = this.fms || {},
                     current = this.current || {},
-                    fmid = current.fmid, fm, tracks, offset;
+                    fmid = current.fmid, fm, tracks, offset, length;
                 if (fmid) {
                     fm = fms[fmid];
                     tracks = fm.tracks;
                     offset = fm.offset;
+                    length = tracks.length;
                     return server
                         .provide('fm.tracks', {
                             fmid: fmid,
@@ -87,6 +90,9 @@ angular
                             var data = res.data.data[0];
                             fm.offset = self._parse(data.offset);
                             Array.prototype.push.apply(tracks, data.songs.map(self._format));
+                            if (length === 0) {
+                                self.tuneTo(fm);
+                            }
                         });
                 }
             }
