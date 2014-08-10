@@ -1,7 +1,7 @@
 'use strict';
 angular
     .module('line')
-    .factory('radio', function (server) {
+    .factory('radio', function ($q, server) {
         return {
             fms: {},
             info: {
@@ -46,6 +46,7 @@ angular
                                 fmData.tracks = tracksData.songs.map(self._format);
                             } else {
                                 fmData.tracks = [];
+                                this.fetch();
                             }
                             self.fms[fm.fmid] = fmData;
                         });
@@ -56,15 +57,19 @@ angular
                 this.current = fm;
                 var tracks = fm.tracks,
                     length = tracks.length,
+                    deferred = $q.defer(),
                     track;
-                if (length <= 1) {
-                    this.fetch();
+                if (length == 0) {
+                    this.fetch().then(function (track) {
+                        deferred.resolve(track);
+                    });
                 }
                 if (length > 0) {
                     track = tracks[0];
                     server.collectTrackInfo(track);
-                    return track;
+                    deferred.resolve(track)
                 }
+                return deferred.promise;
             },
             next: function () {
                 var current = this.current || {},
@@ -76,12 +81,11 @@ angular
                 var self = this,
                     fms = this.fms || {},
                     current = this.current || {},
-                    fmid = current.fmid, fm, tracks, offset, length;
+                    fmid = current.fmid, fm, tracks, offset;
                 if (fmid) {
                     fm = fms[fmid];
                     tracks = fm.tracks;
                     offset = fm.offset;
-                    length = tracks.length;
                     return server
                         .provide('fm.tracks', {
                             fmid: fmid,
@@ -89,9 +93,11 @@ angular
                         }).then(function (res) {
                             var data = res.data.data[0];
                             fm.offset = self._parse(data.offset);
-                            Array.prototype.push.apply(tracks, data.songs.map(self._format));
-                            if (length === 0) {
-                                self.tuneTo(fm);
+                            if (data.songs) {
+                                Array.prototype.push.apply(tracks, data.songs.map(self._format));
+                                return  tracks[0];
+                            } else {
+
                             }
                         });
                 }

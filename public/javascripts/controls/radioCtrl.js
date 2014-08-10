@@ -2,8 +2,9 @@
 angular.module('line').controller('radioCtrl',
     function ($scope, radio, player) {
         $scope.tuneTo = function (fm) {
-            var track = radio.tuneTo(fm);
-            $scope.play(track);
+            radio.tuneTo(fm).then(function (track) {
+                $scope.play(track);
+            });
         };
         $scope.play = function (track) {
             if (player.type !== 'FM') {
@@ -16,8 +17,9 @@ angular.module('line').controller('radioCtrl',
             player.play(track);
         };
         $scope.next = function () {
-            var track = radio.next();
-            $scope.play(track);
+             radio.next().then(function (track) {
+                 $scope.play(track);
+             });
         };
         $scope.$watch('radio.info.page', function (page) {
             radio.list({pageindex: page});
