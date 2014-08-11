@@ -15,9 +15,9 @@ angular
     factory('playlist',
     function (server, player) {
         var tracks = store.getAll();
-
         var playlist = {
             tracks: tracks,
+            hashes: [],
             _deal: function () {
                 this.hashes = _.sortBy(_.values(tracks), function (track) {
                     return track.timestamp;
@@ -26,53 +26,53 @@ angular
                 });
             },
             add: function (track) {
-                var tracks = this.tracks || {},
+                var self = this,
+                    tracks = this.tracks || {},
                     hash ,
                     exist;
-                if (track) {
-                    hash = track.hash;
-                    if (hash) {
-                        exist = hash in tracks;
-                        if (!exist) {
-                            var filesize = track.m4afilesize;
-                            track = _.pick(track, ['filename', 'duration', 'hash', 'singername']);
-                            track.filesize = filesize;
-                            track.timestamp = Date.now();
-                            server
-                                .collectTrackInfo(track)
-                                .then(function () {
+                if (angular.isArray(track)) {
+                    tracks = track;
+                    tracks.forEach(function (track) {
+                        self.add(track);
+                    });
+                } else {
+                    if (track) {
+                        hash = track.hash;
+                        if (hash) {
+                            exist = hash in tracks;
+                            if (!exist) {
+                                track.timestamp = Date.now();
+                                server.provide('track.info', {hash: hash}).then(function (res) {
+                                    angular.extend(track, res.data);
                                     store.set(hash, track);
                                 });
-                            tracks[hash] = track;
-                            this._deal();
+                                tracks[hash] = track;
+                                this._deal();
+                            }
                         }
                     }
                 }
                 return this;
             },
-            random: function () {
-                var tracks = this.tracks || {},
-                    current = player.current || {},
-                    track = _.sample(tracks);
-                if (track) {
-                    if (track.hash === current.hash) {
-                        return this.random();
-                    } else {
-                        return track;
-                    }
-                }
-            },
             remove: function (track) {
-                var tracks = this.tracks || {},
+                var self = this,
+                    tracks = this.tracks || {},
                     hash,
                     exist;
-                if (track) {
-                    hash = track.hash;
-                    if (hash) {
-                        exist = hash in tracks;
-                        if (exist) {
-                            store.remove(hash);
-                            delete  tracks[hash];
+                if (angular.isArray(track)) {
+                    tracks = track;
+                    tracks.forEach(function (track) {
+                        self.add(track);
+                    });
+                } else {
+                    if (track) {
+                        hash = track.hash;
+                        if (hash) {
+                            exist = hash in tracks;
+                            if (exist) {
+                                store.remove(hash);
+                                delete  tracks[hash];
+                            }
                         }
                     }
                 }
@@ -111,6 +111,18 @@ angular
                     }
                 }
                 return tracks[hash];
+            },
+            random: function () {
+                var tracks = this.tracks || {},
+                    current = player.current || {},
+                    track = _.sample(tracks);
+                if (track) {
+                    if (track.hash === current.hash) {
+                        return this.random();
+                    } else {
+                        return track;
+                    }
+                }
             }
         };
         playlist._deal();

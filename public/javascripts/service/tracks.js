@@ -3,9 +3,7 @@ angular
     .module('line')
     .factory('tracks', function (playlist) {
         return {
-            info: {
-                maxSize: 5
-            },
+            maxSize: 5,
             fetch: function () {
 
             },
@@ -14,9 +12,6 @@ angular
             },
             addToPlaylist: function (track) {
                 playlist.add(track);
-            },
-            play: function () {
-
             }
         };
     });

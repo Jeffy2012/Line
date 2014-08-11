@@ -6,7 +6,12 @@ angular
         $routeProvider
             .when('/fms', {
                 templateUrl: '/views/radio.html',
-                controller: 'radioCtrl'
+                controller: 'radioCtrl',
+                resolve: {
+                    callback: function (radio) {
+                        radio.list({pageindex: 1});
+                    }
+                }
             }).when('/search/:keyword', {
                 templateUrl: '/views/tracks.html',
                 controller: 'tracksCtrl',

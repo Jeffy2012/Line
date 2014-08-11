@@ -2,6 +2,19 @@
 angular
     .module('line')
     .factory('server', function ($http) {
+        function parse(offset) {
+            return JSON.parse(decodeURIComponent(offset));
+        }
+
+        function format(track) {
+            var data = {};
+            data.hash = track.hash;
+            data.filename = track.name;
+            data.duration = track.time / 1000;
+            data.filesize = track['320size'];
+            return data;
+        }
+
         var CONFIG = {
             singer: {
                 category: {
@@ -168,6 +181,9 @@ angular
                     url: 'http://mobilecdn.kugou.com/api/v3/song/info',
                     params: {
                         hash: '82ed475862888b9dc44c3dc37ce39257'
+                    },
+                    transformResponse: function (body) {
+                        return _.pick(body.data, ['singerid', 'singername', 'choricsinger', 'songname', 'intro', 'imgurl']);
                     }
                 },
                 src: {
@@ -175,6 +191,9 @@ angular
                     params: {
                         hash: '82ed475862888b9dc44c3dc37ce39257',
                         cmd: 'playInfo'
+                    },
+                    transformResponse: function (body) {
+                        return {src: body.url};
                     }
                 },
                 krc: {
@@ -193,6 +212,22 @@ angular
                     params: {
                         pageindex: 1,
                         pagesize: 15
+                    },
+                    transformResponse: function (body) {
+                        var data = body.data,
+                            fms = (data || []).map(function (fm) {
+                                var tracksData = fm.fmSongData[0],
+                                    tracks ,
+                                    fmData = _.pick(fm, ['fmid', 'fmname', 'classid', 'classname', 'fmtype', 'imgurl']);
+                                fmData.offset = parse(tracksData.offset);
+                                tracks = (tracksData.songs || []).map(format);
+                                fmData.tracks = tracks;
+                                return fmData;
+                            });
+                        return {
+                            fms: fms,
+                            total: body.recordcount
+                        };
                     }
                 },
                 tracks: {
@@ -201,6 +236,15 @@ angular
                         fmid: 5,
                         offset: '',
                         size: 10
+                    },
+                    transformResponse: function (body) {
+                        var data = body.data[0],
+                            offset = parse(data.offset),
+                            tracks = (data.songs || []).map(format);
+                        return {
+                            tracks: tracks,
+                            offset: offset
+                        };
                     }
                 }
             },
@@ -211,6 +255,17 @@ angular
                         keyword: '周杰伦',
                         page: 1,
                         pagesize: 15
+                    },
+                    transformResponse: function (body) {
+                        var data = body.data,
+                            tracks = (data.info || []).map(function (track) {
+                                track.filesize = track.m4afilesize;
+                                return _.pick(track, ['filename', 'duration', 'hash', 'singername', 'filesize']);
+                            });
+                        return {
+                            data: tracks,
+                            total: data.total
+                        };
                     }
                 },
                 ac: {
@@ -244,26 +299,6 @@ angular
                 }
                 config.cache = true;
                 return $http(config);
-            },
-            collectTrackInfo: function (track) {
-                return this.
-                    provide('track.info', {
-                        hash: track.hash
-                    }).then(function (res) {
-                        var info = res.data.data;
-                        if (info) {
-                            info = _.pick(info, [
-                                'singerid',
-                                'singername',
-                                'choricsinger',
-                                'songname',
-                                'intro',
-                                'imgurl'
-                            ]);
-                            angular.extend(track, info);
-                        }
-                        return track;
-                    });
             }
         };
     });

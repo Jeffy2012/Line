@@ -14,14 +14,18 @@ angular.module('line').controller('radioCtrl',
                 player.prev = angular.noop;
                 player.type = 'FM';
             }
-            player.play(track);
+            if (track) {
+                player.play(track);
+            }
         };
         $scope.next = function () {
-             radio.next().then(function (track) {
-                 $scope.play(track);
-             });
+            radio.next().then(function (track) {
+                $scope.play(track);
+            });
         };
-        $scope.$watch('radio.info.page', function (page) {
-            radio.list({pageindex: page});
-        })
+        $scope.$watch('radio.page', function (newVal, oldVal) {
+            if (oldVal && newVal && newVal !== oldVal) {
+                radio.list({pageindex: newVal});
+            }
+        });
     });

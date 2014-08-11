@@ -47,8 +47,8 @@ angular
             return krc;
         }
 
-        var stopQueue = [];
-        var pauseQueue = [];
+        var stopQueue = {};
+        var pauseQueue = {};
         var howls = $cacheFactory('howlCache');
         var krcCache = $cacheFactory('krcCache');
         var player = {
@@ -59,8 +59,7 @@ angular
             currentTime: 0,
             progress: 0,
             play: function (track) {
-                var self = this,
-                    current = this.current || {},
+                var current = this.current || {},
                     currentHash = current.hash,
                     hash,
                     howl;
@@ -74,22 +73,23 @@ angular
                         if (howl) {
                             howl.play();
                         } else {
-                            server
-                                .provide('track.src', {hash: hash})
-                                .then(function (res) {
-                                    howl = new Howl({
-                                        src: res.data.url,
-                                        html5: true,
-                                        preload: false
-                                    });
-                                    howls.put(hash, howl);
-                                    ['load', 'loaderror', 'play', 'pause', 'end', 'faded'].forEach(function (event) {
-                                        howl.on(event, function () {
-                                            $rootScope.$broadcast('player:' + event.toUpperCase(), howl);
-                                        });
-                                    });
-                                    howl.play();
+                            server.provide('track.src', { hash: track.hash }).then(function (res) {
+                                var src = res.data.src;
+                                howl = new Howl({
+                                    src: src,
+                                    html5: true,
+                                    preload: false
                                 });
+                                track.src = src;
+                                howl.track = track;
+                                howls.put(hash, howl);
+                                ['load', 'loaderror', 'play', 'pause', 'end', 'faded'].forEach(function (event) {
+                                    howl.on(event, function () {
+                                        $rootScope.$broadcast('player:' + event.toUpperCase(), howl);
+                                    });
+                                });
+                                howl.play();
+                            });
                         }
                     }
                 } else {
@@ -112,8 +112,18 @@ angular
                     if (howl) {
                         howl.pause();
                     } else {
-                        //todo
-                        pauseQueue.push(hash);
+                        pauseQueue[hash] = $rootScope.$on('player:PLAY', function (event, howl) {
+                            var trackHash = howl.track.hash, off;
+                            if (trackHash === hash) {
+                                event.stopPropagation();
+                                howl.pause();
+                                off = pauseQueue[trackHash];
+                                if (off) {
+                                    off();
+                                    delete pauseQueue[trackHash];
+                                }
+                            }
+                        });
                     }
                 }
                 return this;
@@ -126,8 +136,18 @@ angular
                     if (howl) {
                         howl.stop();
                     } else {
-                        //todo
-                        stopQueue.push(hash);
+                        stopQueue[hash] = $rootScope.$on('player:PLAY', function (event, howl) {
+                            var trackHash = howl.track.hash, off;
+                            if (trackHash === hash) {
+                                event.stopPropagation();
+                                howl.pause();
+                                off = stopQueue[trackHash];
+                                if (off) {
+                                    off();
+                                    delete stopQueue[trackHash];
+                                }
+                            }
+                        });
                     }
                 }
                 return this;
@@ -151,7 +171,6 @@ angular
                 }
                 return 0;
             },
-            //todo
             fade: function () {
 
             },

@@ -8,11 +8,12 @@ angular
                 var self = this;
                 server
                     .provide('search.tracks', angular.extend(self.query, {page: page}))
-                    .success(function (body, status, headers, config) {
-                        tracks.data = body.data.info;
-                        tracks.info.pagesize = config.params.pagesize;
-                        tracks.info.total = body.data.total;
-                        tracks.info.page = config.params.page
+                    .then(function (res) {
+                        var data = res.data,
+                            params = res.config.params;
+                        data.pagesize = params.pagesize;
+                        data.page = params.page;
+                        angular.extend(tracks, data);
                     });
             },
             search: function (query) {
