@@ -1,5 +1,4 @@
-<div class="playlist"
-     data-ng-controller="playlistCtrl">
+<div class="playlist" data-ng-controller="playlistCtrl">
     <div class="track"
          data-ng-class="{'bg-info': !isPlaying(track),'btn-primary': isPlaying(track)}"
          data-ng-repeat="track in playlist.tracks | orderObjectBy:'timestamp'">

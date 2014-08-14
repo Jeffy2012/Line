@@ -40,7 +40,15 @@ angular
             if (input) {
                 return input.replace('{size}', size);
             } else {
-                return '/images/line.png'
+                return '/images/line.png';
+            }
+        };
+    }).filter('name', function () {
+        return function (input) {
+            if (input) {
+                return input.replace(/.*-/ig, '');
+            } else {
+                return '';
             }
         };
     });

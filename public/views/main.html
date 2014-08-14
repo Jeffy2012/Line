@@ -1,0 +1,20 @@
+<div class="track-name">{{player.current.singername}}</div>
+<div class="img-con">
+    <div class="normal">
+        <img class="singer-img" data-ng-src="{{player.current.imgurl | size:200}}" alt=""/>
+    </div>
+    <div class="inversion"></div>
+</div>
+<div class="track-name">{{player.current.filename | name}}</div>
+<div class=" player-progress">
+    <div class="progress" data-ng-click="seek($event)">
+        <div class="progress-bar"
+             role="progressbar"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             data-ng-style="{width: player.progress + '%'}">
+        </div>
+    </div>
+    <span class="current">{{player.currentTime | time}}</span>
+    <span class="duration">{{player.current.duration | time}}</span>
+</div>

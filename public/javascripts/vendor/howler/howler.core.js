@@ -41,7 +41,7 @@
      * @return {Howler}
      */
     init: function() {
-      var self = this;
+      var self = this || Howler;
 
       // Internal properties.
       self._codecs = {};
@@ -75,7 +75,7 @@
      * @return {Howler/Float}     Returns self or current volume.
      */
     volume: function(vol) {
-      var self = this;
+      var self = this || Howler;
       vol = parseFloat(vol);
 
       if (typeof vol !== 'undefined' && vol >= 0 && vol <= 1) {
@@ -94,7 +94,7 @@
 
             // Loop through all sounds and change the volumes.
             for (var j=0; j<ids.length; j++) {
-              var sound = self._howls[i]._soundById(ids[i]);
+              var sound = self._howls[i]._soundById(ids[j]);
 
               if (sound) {
                 sound._node.volume = sound._volume * vol;
@@ -114,7 +114,7 @@
      * @param  {Boolean} muted Is muted or not.
      */
     mute: function(muted) {
-      var self = this;
+      var self = this || Howler;
 
       self._muted = muted;
 
@@ -131,7 +131,7 @@
 
           // Loop through all sounds and mark the audio node as muted.
           for (var j=0; j<ids.length; j++) {
-            var sound = self._howls[i]._soundById(ids[i]);
+            var sound = self._howls[i]._soundById(ids[j]);
 
             if (sound) {
               sound._node.muted = muted;
@@ -149,7 +149,7 @@
      * @return {Boolean}
      */
     codecs: function(ext) {
-      return this._codecs[ext];
+      return (this || Howler)._codecs[ext];
     },
 
     /**
@@ -157,7 +157,7 @@
      * @return {Howler}
      */
     _setupCodecs: function() {
-      var self = this;
+      var self = this || Howler;
       var audioTest = new Audio();
 
       self._codecs = {
@@ -182,7 +182,7 @@
      * @return {Howler}
      */
     _enableiOSAudio: function() {
-      var self = this;
+      var self = this || Howler;
 
       // Only run this on iOS if audio isn't already eanbled.
       if (ctx && (self._iOSEnabled || !/iPhone|iPad|iPod/i.test(navigator.userAgent))) {
@@ -318,7 +318,7 @@
         return;
       }
 
-      // Loop through the sources and pick the first on that is compatible.
+      // Loop through the sources and pick the first one that is compatible.
       for (var i=0; i<self._src.length; i++) {
         var ext, str;
 
@@ -595,6 +595,11 @@
             sound._node.bufferSource = null;
           } else if (!isNaN(sound._node.duration)) {
             sound._node.pause();
+          }
+
+          // Fire the pause event, unless `true` is passed as the 2nd argument.
+          if (!arguments[1]) {
+            self._emit('pause', sound._id);
           }
         }
       }
@@ -955,10 +960,19 @@
       if (sound) {
         if (seek >= 0) {
           // Pause the sound and update position for restarting playback.
-          self.pause(id);
+          var playing = self.playing(id);
+          if (playing) {
+            self.pause(id, true);
+          }
+
+          // Move the position of the track and cancel timer.
           sound._seek = seek;
           self._clearTimer(id);
-          self.play(id);
+
+          // Restart the playback if the sound was playing.
+          if (playing) {
+            self.play(id);
+          }
         } else {
           return (self._webAudio) ? sound._seek + (ctx.currentTime - sound._playStart) : sound._node.currentTime;
         }
@@ -969,12 +983,12 @@
 
     /**
      * Check if a specific sound is currently playing or not.
-     * @param  {Number} id The sound id to check.
+     * @param  {Number} id The sound id to check. If none is passed, first sound is used.
      * @return {Boolean}    True if playing and false if not.
      */
     playing: function(id) {
       var self = this;
-      var sound = self._soundById(id);
+      var sound = self._soundById(id) || self._sounds[0];
 
       return sound ? !sound._paused : false;
     },
@@ -997,9 +1011,12 @@
 
         // Remove the source or disconnect.
         if (!self._webAudio) {
+          // Set the source to an empty string to stop any downloading.
           sounds[i]._node.src = '';
-        } else {
-          sounds[i]._node.disconnect(0);
+
+          // Remove any event listeners.
+          sounds[i]._node.removeEventListener('error', sounds[i]._errorFn, false);
+          sounds[i]._node.removeEventListener('canplaythrough', sounds[i]._loadFn, false);
         }
 
         // Empty out all of the nodes.
@@ -1019,6 +1036,8 @@
       if (cache) {
         delete cache[self._src];
       }
+
+      // Clear out `self`.
       self = null;
 
       return null;
@@ -1322,42 +1341,12 @@
         self._node = new Audio();
 
         // Listen for errors (http://dev.w3.org/html5/spec-author-view/spec.html#mediaerror).
-        var errorListener = function () {
-          if (self._node.error && self._node.error.code === 4) {
-            Howler.noAudio = true;
-          }
-
-          // Fire an error event and pass back the code.
-          parent._emit('loaderror', self._id, self._node.error ? self._node.error.code : 0);
-          
-          // Clear the event listener.
-          self._node.removeEventListener('error', errorListener, false);
-        };
-        self._node.addEventListener('error', errorListener, false);
+        self._errorFn = self._errorListener.bind(self);
+        self._node.addEventListener('error', self._errorFn, false);
 
         // Listen for 'canplaythrough' event to let us know the sound is ready.
-        var loadListener = function() {
-          // Round up the duration to account for the lower precision in HTML5 Audio.
-          parent._duration = Math.ceil(self._node.duration * 10) / 10;
-
-          // Setup a sprite if none is defined.
-          if (Object.keys(parent._sprite).length === 0) {
-            parent._sprite = {__default: [0, parent._duration * 1000]};
-          }
-
-          if (!parent._loaded) {
-            parent._loaded = true;
-            parent._emit('load');
-          }
-
-          if (parent._autoplay) {
-            parent.play();
-          }
-
-          // Clear the event listener.
-          self._node.removeEventListener('canplaythrough', loadListener, false);
-        };
-        self._node.addEventListener('canplaythrough', loadListener, false);
+        self._loadFn = self._loadListener.bind(self);
+        self._node.addEventListener('canplaythrough', self._loadFn, false);
 
         // Setup the new audio node.
         self._node.src = parent._src;
@@ -1393,6 +1382,51 @@
       self._id = Math.round(Date.now() * Math.random());
 
       return self;
+    },
+
+    /**
+     * HTML5 Audio error listener callback.
+     */
+    _errorListener: function() {
+      var self = this;
+
+      if (self._node.error && self._node.error.code === 4) {
+        Howler.noAudio = true;
+      }
+
+      // Fire an error event and pass back the code.
+      parent._emit('loaderror', self._id, self._node.error ? self._node.error.code : 0);
+      
+      // Clear the event listener.
+      self._node.removeEventListener('error', self._errorListener, false);
+    },
+
+    /**
+     * HTML5 Audio canplaythrough listener callback.
+     */
+    _loadListener: function() {
+      var self = this;
+      var parent = self._parent;
+
+      // Round up the duration to account for the lower precision in HTML5 Audio.
+      parent._duration = Math.ceil(self._node.duration * 10) / 10;
+
+      // Setup a sprite if none is defined.
+      if (Object.keys(parent._sprite).length === 0) {
+        parent._sprite = {__default: [0, parent._duration * 1000]};
+      }
+
+      if (!parent._loaded) {
+        parent._loaded = true;
+        parent._emit('load');
+      }
+
+      if (parent._autoplay) {
+        parent.play();
+      }
+
+      // Clear the event listener.
+      self._node.removeEventListener('canplaythrough', self._loadListener, false);
     }
   };
 

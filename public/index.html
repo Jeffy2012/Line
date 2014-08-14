@@ -3,32 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Line</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="stylesheets/styles.css"/>
 </head>
 <body class="container-fluid"
       data-ng-controller="lineCtrl">
-<div id="LINE">
-    <div id="player-con"
-         data-ng-include="'/views/player.html'"></div>
-    <div id="main-con">
-        <div class="row">
-            <div class="col-lg-4 col-md-4" data-ng-include="'/views/search.html'"></div>
-            <div class="col-lg-6 col-md-6">
-                <a class="btn btn-link"
-                   href="/#/fms"
-                   data-ng-click="radio.list()">电台</a>
-            </div>
-        </div>
-    </div>
-    <div id="LINE-content" class="row">
-        <div id="playlist-con" class="col-lg-4 col-md-4"
-             data-ng-include="'/views/playlist.html'"></div>
-        <div id="krc-con" class="col-lg-4 col-md-4"
-             data-ng-include="'/views/krc.html'"></div>
-        <div id="tracks-con" class="col-lg-4 col-md-4"
-             data-ng-view></div>
-    </div>
+<div id="player-con" class="row navbar-fixed-bottom">
+    <div class="col-lg-12" data-ng-include="'/views/player.html'"></div>
 </div>
+
+<!--<div id="main-con">-->
+<!--<div data-ng-include="'/views/search.html'"></div>-->
+<!--</div>-->
+<div class="nav-con row">
+    <a href="/#/playlist" class="btn">
+        <span class="glyphicon glyphicon-th-list"></span>
+    </a>
+    <img src="images/header-logo.png" alt=""/>
+    <a href="" class="btn">
+        <span class="glyphicon glyphicon-search"></span>
+    </a>
+</div>
+<div data-ng-view></div>
+
+<!--<div class="row">
+    <div id="playlist-con" class="col-lg-4 col-md-4"
+    data-ng-include="'/views/playlist.html'"></div>
+    <div id="krc-con" class="col-lg-4 col-md-4"
+    data-ng-include="'/views/krc.html'"></div>
+    <div id="tracks-con" class="col-lg-4 col-md-4"
+    data-ng-view></div>
+</div>-->
 <script src="javascripts/vendor/jquery/jquery-2.1.1.js"></script>
 <script src="javascripts/vendor/underscore.js"></script>
 <script src="javascripts/vendor/howler/howler.core.js"></script>

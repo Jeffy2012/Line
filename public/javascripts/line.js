@@ -4,6 +4,9 @@ angular
     .config(function ($locationProvider, $routeProvider) {
         $locationProvider.html5Mode(true);
         $routeProvider
+            .when('/', {
+                templateUrl: '/views/main.html'
+            })
             .when('/fms', {
                 templateUrl: '/views/radio.html',
                 controller: 'radioCtrl',
@@ -20,5 +23,9 @@ angular
                         explorer.search({keyword: $route.current.params.keyword});
                     }
                 }
+            })
+            .when('/playlist', {
+                templateUrl: '/views/playlist.html',
+                controller: 'playlistCtrl'
             });
     });

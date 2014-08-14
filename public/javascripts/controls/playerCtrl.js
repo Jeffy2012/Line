@@ -3,7 +3,6 @@ angular
     .module('line')
     .controller('playerCtrl',
     function ($scope, player, visualization) {
-        $scope.player = player;
         $scope.seek = function (event) {
             var current = player.current || {},
                 duration = current.duration || 0,
@@ -22,7 +21,7 @@ angular
             }
         });
         var canvas = $('.player canvas')[0],
-            $visual = $(".player .visual");
+            $visual = $('.player .visual');
 
         function dealCanvas() {
             canvas.height = $visual.height();

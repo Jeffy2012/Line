@@ -92,6 +92,8 @@ angular
                     } else {
                         hash = hashes[index + 1];
                     }
+                } else {
+                    hash = hashes[0];
                 }
                 return tracks[hash];
             },
@@ -109,6 +111,8 @@ angular
                     } else {
                         hash = hashes[index - 1];
                     }
+                } else {
+                    hash = hashes[0];
                 }
                 return tracks[hash];
             },
