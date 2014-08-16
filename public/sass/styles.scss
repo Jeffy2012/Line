@@ -25,154 +25,140 @@ body {
   background-image: url('../images/bg.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
+  padding: $nav-height 0 $player-height 0;
 }
 
-#LINE {
-  position: relative;
-  padding: 64px 0 117px;
-  height: 100%;
+.view-con {
   width: 100%;
-
-}
-
-#main-con {
-  padding-top: 15px;
-  top: 0;
-}
-
-#LINE-content {
   height: 100%;
-  width: 100%;
-  overflow: hidden;
-  .main-nav {
-    padding-top: 15px;
+}
+
+.nav-con {
+  height: $nav-height;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #FFF;
+  line-height: 50px;
+  img {
+    margin: 10px;
+    height: 30px;
+  }
+  .btn {
+    margin: ($nav-height - 34px)/2;
+    color: #FFF;
+    font-size: 18px;
+    background-color: transparent;
+    &:hover {
+      color: $theme-color-yellow;
+    }
+  }
+  .playlist-btn {
+    float: left;
+  }
+  .search-btn {
+    float: right;
   }
 }
 
-#player-con {
-  border-top: 1px solid #FFF;
+.main-con {
+  margin: 15px 0;
+}
+
+#player-con, .nav-con {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
 .player {
-  height: 60px;
+  height: $player-height;
+  position: relative;
   width: 100%;
   font-size: 0px;
   text-align: center;
   .player-control {
     color: $control-icon-color;
     display: inline-block;
-    font-size: 16px;
+    font-size: $player-button-size;
     height: $control-size;
     width: $control-size;
     line-height: $control-size;
     text-align: center;
-    margin: (60px - $control-size) / 2 20px;
+    margin: ($player-height - $control-size) / 2 25px;
     &.play, &.pause {
       border: $control-border-width solid $control-border-color;
-      line-height: $control-size - $control-border-width * 2;
       @include border-radius($control-size/2);
     }
+  }
+  .progress {
+    height: 2px;
+    background-color: $theme-color-blue;
+    margin-bottom: 0;
+  }
+  .progress-bar {
+    background-color: $theme-color-yellow;
+  }
+  .duration, .current {
+    padding: 5px 10px;
+    position: absolute;
+    top: 2px;
+    font-size: 12px;
+  }
+  .duration {
+    color: $theme-color-blue;
+    right: 0;
+  }
+  .current {
+    color: $theme-color-yellow;
+    left: 0;
   }
 }
 
 .img-con {
-  width: 80%;
+  width: 66%;
   position: relative;
   margin: 10px auto;
+  .icon {
+    color: #FFF;
+    position: absolute;
+    right: 100%;
+    padding: 5px;
+
+    &.heart {
+      bottom: 0;
+    }
+    .glyphicon-heart {
+      color: $theme-color-yellow;
+    }
+    &.radio {
+      bottom: 24px;
+    }
+  }
   .singer-img {
-    border: 10px solid #FFF;
+    border: 6px solid #FFF;
     width: 100%;
     vertical-align: top;
   }
   .normal {
-    margin-bottom: 5px;
+    margin-bottom: 3px;
   }
   .inversion {
     position: absolute;
     overflow: hidden;
-    @include background-image(linear-gradient(top, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1)));
+    @include background-image(linear-gradient(top, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)));
     opacity: 0.2;
     width: 100%;
     height: 40px;
   }
 }
 
-.track-name {
+.track-info {
   height: 40px;
   line-height: 40px;
-  width: 80%;
   margin: 0 auto;
   color: #FFF;
   text-align: center;
 }
 
-.player-progress {
-  font-size: 12px;
-  .progress {
-    height: 4px;
-    background-color: $theme-color-blue;
-    margin-bottom: 5px;
-  }
-  .progress-bar {
-    background-color: $theme-color-yellow;
-  }
-  .duration {
-    color: $theme-color-yellow;
-    float: right;
-  }
-  .current {
-    color: $theme-color-blue;
-  }
-}
-
-.nav-con {
-  height: 40px;
-  margin-bottom: 15px;
-  text-align: center;
-  color: #FFF;
-  line-height: 40px;
-  img {
-    margin: 5px;
-    height: 30px;
-  }
-  .btn {
-    margin: 3px;
-    color: #FFF;
-    background-color: transparent;
-    &:hover {
-      color: $theme-color-yellow;
-    }
-  }
-}
-
-//.search {
-//  .dropdown-menu {
-//    width: 100%;
-//  }
-//}
-
-//::-webkit-scrollbar {
-//  width: 6px;
-//}
-//
-//::-webkit-scrollbar-track-piece {
-//}
-//
-//::-webkit-scrollbar-thumb {
-//  background-color: $theme-color-blue;
-//  -webkit-border-radius: 3px;
-//  border-radius: 3px;
-//  &:hover {
-//  }
-//}
-
-#krc-con {
-  height: 100%;
-  overflow: hidden;
-}
-
-#playlist-con, #tracks-con {
+.playlist, .fms, .krc {
   height: 100%;
   overflow: auto;
 }
@@ -183,19 +169,6 @@ body {
   height: 33px;
   margin-bottom: 2px;
   padding: 5px 10px;
-  .playlist &, .tracks & {
-    .btn {
-      visibility: hidden;
-    }
-    &:hover {
-      .btn {
-        visibility: visible;
-      }
-      .track-duration {
-        display: none;
-      }
-    }
-  }
 }
 
 .tracks {
@@ -208,25 +181,19 @@ body {
   }
 }
 
-#krc-con {
-  position: relative;
-  .krc {
-    position: absolute;
-    top: 50%;
-  }
-}
-
 .krc {
   width: 100%;
+  font-size: 10px;
+  color: #FFF;
   @include single-transition(top, 0.5s);
   p {
     text-align: center;
     @include single-transition(font-size, 0.5s);
     margin: 0;
-    padding-bottom: 10px;
+    padding-top: 5px;
   }
   .active {
-    font-size: 18px;
+    font-size: 12px;
     color: $theme-color-blue;
   }
 }

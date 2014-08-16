@@ -10,11 +10,15 @@ angular
             var data = {};
             data.hash = track.hash;
             data.filename = track.name;
-            data.duration = track.time / 1000;
-            data.filesize = track['320size'];
+            data.duration = Math.floor(track.time / 1000);
+            data.filesize = track.size;
             return data;
         }
 
+        var fms = fmdata.map(function (fm) {
+            fm.tracks = fm.songs.map(format);
+            return _.pick(fm, ['cat', 'fmid', 'fmname', 'fmtype', 'tracks']);
+        });
         var CONFIG = {
             singer: {
                 category: {
@@ -187,10 +191,13 @@ angular
                     }
                 },
                 src: {
-                    url: '/fetch/song',
+                    url: '/fetch/src',
                     params: {
-                        hash: '82ed475862888b9dc44c3dc37ce39257',
-                        cmd: 'playInfo'
+                        key: 'ff8c3f8997d258b10184f2f32d60e451',
+                        cmd: 4,
+                        hash: 'ad076ad7b258b3698d73cec49bc2a89d',
+                        acceptMp3: 1,
+                        pid: 7
                     },
                     transformResponse: function (body) {
                         return {src: body.url};
@@ -199,43 +206,22 @@ angular
                 krc: {
                     url: '/fetch/krc',
                     params: {
-                        cmd: 100,
-                        keyword: '张杰+-+他不懂',
-                        timelength: 232,
-                        hash: '2d50ad228549434e3eec57678f18092b'
+                        cmd: 200,
+                        type: 0,
+                        keyword: '%u5468%u6770%u4F26%20-%20%u661F%u6674',
+                        timelength: 259000,
+                        hash: '3271C8FAED5B4E952DC0C845799B3A2F'
                     }
                 }
             },
             fm: {
-                list: {
-                    url: '/fetch/fms',
-                    params: {
-                        pageindex: 1,
-                        pagesize: 15
-                    },
-                    transformResponse: function (body) {
-                        var data = body.data,
-                            fms = (data || []).map(function (fm) {
-                                var tracksData = fm.fmSongData[0],
-                                    tracks ,
-                                    fmData = _.pick(fm, ['fmid', 'fmname', 'classid', 'classname', 'fmtype', 'imgurl']);
-                                fmData.offset = parse(tracksData.offset);
-                                tracks = (tracksData.songs || []).map(format);
-                                fmData.tracks = tracks;
-                                return fmData;
-                            });
-                        return {
-                            fms: fms,
-                            total: body.recordcount
-                        };
-                    }
-                },
                 tracks: {
                     url: '/fetch/fm',
                     params: {
-                        fmid: 5,
-                        offset: '',
-                        size: 10
+                        cmd: 1,
+                        fmid0: 5,
+                        fmcount: 1,
+                        fmtype0: 2
                     },
                     transformResponse: function (body) {
                         var data = body.data[0],
@@ -299,6 +285,7 @@ angular
                 }
                 config.cache = true;
                 return $http(config);
-            }
+            },
+            fms: fms
         };
     });

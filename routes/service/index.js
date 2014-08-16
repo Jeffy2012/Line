@@ -3,10 +3,9 @@ var router = express.Router();
 var Q = require('q');
 var request = require('request');
 var config = {
-    song: 'http://m.kugou.com/app/i/getSongInfo.php',
-    fms: 'http://m.kugou.com/app/i/fmList.php',
-    fm: 'http://m.kugou.com/app/i/fmSongs.php',
-    krc: 'http://m.kugou.com/app/i/krc.php'
+    fm: 'http://www.kugou.com/fm/app/i/',
+    src: 'http://trackercdn.kugou.com/i/',
+    krc: 'http://mobilecdn.kugou.com/new/app/i/krc.php'
 };
 
 function fetch(key, query) {

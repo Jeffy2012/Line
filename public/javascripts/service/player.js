@@ -52,8 +52,6 @@ angular
         var howls = $cacheFactory('howlCache');
         var krcCache = $cacheFactory('krcCache');
         var player = {
-            //type: 'PLAYLIST', // 'FM'
-            mode: 'NORMAL', // 'RANDOM' 'LOOP'
             current: {},
             krc: {},
             currentTime: 0,
@@ -73,7 +71,10 @@ angular
                         if (howl) {
                             howl.play();
                         } else {
-                            server.provide('track.src', { hash: track.hash }).then(function (res) {
+                            server.provide('track.src', {
+                                hash: hash,
+                                key: md5(hash + 'kgcloud')
+                            }).then(function (res) {
                                 var src = res.data.src;
                                 howl = new Howl({
                                     src: src,

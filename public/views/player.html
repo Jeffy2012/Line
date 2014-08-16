@@ -1,6 +1,17 @@
 <div class="player">
-    <div class="player-control"
-         data-ng-click="player.prev()">
+    <div class="progress" data-ng-click="seek($event)">
+        <div class="progress-bar"
+             role="progressbar"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             data-ng-style="{width: player.progress + '%'}">
+        </div>
+    </div>
+    <span class="current">{{player.currentTime | time}}</span>
+    <span class="duration">{{player.current.duration | time}}</span>
+
+    <div class="player-control prev"
+         data-ng-click="prev()">
         <span class="glyphicon glyphicon-step-backward"></span>
     </div>
     <div class="player-control pause"
@@ -13,26 +24,8 @@
          data-ng-click="player.pause()">
         <span class="glyphicon glyphicon-pause"></span>
     </div>
-    <div class="player-control"
-         data-ng-click="player.next()">
+    <div class="player-control next"
+         data-ng-click="next()">
         <span class="glyphicon glyphicon-step-forward"></span>
     </div>
-    <!--<div class="player-right">-->
-    <!--<div class="btn-group" data-ng-if="player.type !== 'FM'">-->
-    <!--<label class="btn btn-xs btn-default" data-ng-model="player.mode" btn-radio="'NORMAL'">-->
-    <!--<span class="glyphicon glyphicon-retweet"></span></label>-->
-    <!--<label class="btn btn-xs  btn-default" data-ng-model="player.mode" btn-radio="'LOOP'">-->
-    <!--<span class="glyphicon glyphicon-repeat"></span></label>-->
-    <!--<label class="btn btn-xs  btn-default" data-ng-model="player.mode" btn-radio="'RANDOM'">-->
-    <!--<span class="glyphicon glyphicon-random"></span></label>-->
-    <!--</div>-->
-    <!--<div class="visual">-->
-    <!--<img class="singer-img" data-ng-src="{{player.current.imgurl | size:80}}" alt="" width="48"/>-->
-    <!--<canvas width="300px" height="48px"></canvas>-->
-    <!--</div>-->
-    <!--<span class="current">{{player.currentTime | time}}</span>-->
-    <!--<span class="duration">{{player.current.duration | time}}</span>-->
-
-
-    <!--</div>-->
 </div>

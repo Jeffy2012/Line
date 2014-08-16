@@ -3,8 +3,6 @@ angular
     .module('line')
     .controller('krcCtrl', function ($scope, player) {
         $scope.player = player;
-
-
         $scope.$watch('player.krc.active', function (index) {
             var conHeight = $('#krc-con').height();
             var itemHeight = $('.krc p').eq(0).outerHeight();

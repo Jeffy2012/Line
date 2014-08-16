@@ -1,7 +1,7 @@
 'use strict';
 angular
     .module('line')
-    .controller('lineCtrl', function ($scope, player, radio, playlist) {
+    .controller('lineCtrl', function ($scope, $location, player, radio, playlist) {
         $scope.player = player;
         $scope.radio = radio;
         $scope.playlist = playlist;
@@ -13,19 +13,12 @@ angular
                 offsetX = event.offsetX;
             player.seek(Math.floor(offsetX / width * duration));
         };
-        $scope.play = function (track) {
-            if (player.type !== 'PLAYLIST') {
-                player.next = function () {
-                    $scope.next();
-                };
-                player.prev = function () {
-                    $scope.prev();
-                };
-                player.type = 'PLAYLIST';
+        $scope.play = function (track, type) {
+            if (type) {
+                $scope.status.type = type;
             }
             player.play(track);
         };
-        $scope.play(playlist.random());
         $scope.remove = function (track) {
             if (track.hash === player.current.hash) {
                 var nextTrack = playlist.next();
@@ -40,32 +33,59 @@ angular
         $scope.isPlaying = function (track) {
             return track.hash === (player.current || {}).hash;
         };
+        $scope.status = {
+            //type: 'PLAYLIST', // 'FM'
+            mode: 'NORMAL' // 'RANDOM' 'LOOP'
+        };
         $scope.next = function () {
-            var track, mode = player.mode;
-            if (mode === 'RANDOM') {
-                track = playlist.random();
-            } else if (mode === 'NORMAL') {
-                track = playlist.next();
+            var status = $scope.status,
+                type = status.type,
+                mode = status.mode,
+                track;
+            if (type === 'PLAYLIST') {
+                if (mode === 'RANDOM') {
+                    track = playlist.random();
+                } else if (mode === 'NORMAL') {
+                    track = playlist.next();
+                }
+                $scope.play(track);
+            } else if (type === 'FM') {
+                radio.next().then(function (track) {
+                    $scope.play(track);
+                });
             }
-            $scope.play(track);
         };
         $scope.prev = function () {
-            var track, mode = player.mode;
-            if (mode === 'RANDOM') {
-                track = playlist.random();
-            } else if (mode === 'NORMAL') {
-                track = playlist.prev();
+            var status = $scope.status,
+                type = status.type,
+                mode = status.mode,
+                track;
+            if (type === 'PLAYLIST') {
+                if (mode === 'RANDOM') {
+                    track = playlist.random();
+                } else if (mode === 'NORMAL') {
+                    track = playlist.prev();
+                }
+                $scope.play(track);
+            } else if (type === 'FM') {
+                radio.next().then(function (track) {
+                    $scope.play(track);
+                });
             }
-            $scope.play(track);
+        };
+        $scope.tuneTo = function (fm) {
+            radio.tuneTo(fm).then(function (track) {
+                $scope.play(track, 'FM');
+            });
         };
         $scope.$on('player:END', function () {
-            var mode = player.mode,
-                type = player.type,
-                current = player.current || {};
-            if (mode === 'LOOP' && type === 'PLAYLIST') {
-                player.play(current);
-            } else {
-                player.next();
-            }
+            $scope.next();
         });
+        $scope.$on('player:PLAY', function () {
+            $location.path('/');
+        });
+        $scope.$watch('playlist.total', function () {
+            $scope.status.heart = playlist.exist(player.current);
+        });
+        $scope.tuneTo(_.sample(radio.fms));
     });

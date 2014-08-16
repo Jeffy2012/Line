@@ -1,6 +1,9 @@
 $theme-color-blue: #28A7E1;
 $theme-color-yellow: #F39800;
-$control-size: 40px;
+$player-height: 100px;
+$player-button-size: 24px;
+$nav-height: 50px;
+$control-size: $player-button-size * 2;
 $control-border-width: 3px;
 $control-border-color: #FFF;
 $control-hover-border-color: $theme-color-yellow;

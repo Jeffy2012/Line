@@ -8,14 +8,9 @@ angular
                 templateUrl: '/views/main.html'
             })
             .when('/fms', {
-                templateUrl: '/views/radio.html',
-                controller: 'radioCtrl',
-                resolve: {
-                    callback: function (radio) {
-                        radio.list({pageindex: 1});
-                    }
-                }
-            }).when('/search/:keyword', {
+                templateUrl: '/views/radio.html'
+            })
+            .when('/search/:keyword', {
                 templateUrl: '/views/tracks.html',
                 controller: 'tracksCtrl',
                 resolve: {
@@ -25,7 +20,6 @@ angular
                 }
             })
             .when('/playlist', {
-                templateUrl: '/views/playlist.html',
-                controller: 'playlistCtrl'
+                templateUrl: '/views/playlist.html'
             });
     });

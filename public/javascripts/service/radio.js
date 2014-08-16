@@ -3,21 +3,8 @@ angular
     .module('line')
     .factory('radio', function ($q, server) {
         return {
-            fms: {},
-            maxSize: 5,
-            query: {},
+            fms: server.fms,
             current: {},
-            list: function (query) {
-                var self = this;
-                server
-                    .provide('fm.list', query)
-                    .then(function (res) {
-                        var params = res.config.params;
-                        angular.extend(self, res.data);
-                        self.pagesize = params.pagesize;
-                        self.page = params.pageindex;
-                    });
-            },
             tuneTo: function (fm) {
                 fm = fm || {};
                 this.current = fm;
@@ -48,22 +35,22 @@ angular
             },
             fetch: function () {
                 var current = this.current || {},
-                    fmid = current.fmid, tracks = current.tracks || [], offset = current.offset;
-                if (fmid && offset) {
-                    return server
-                        .provide('fm.tracks', {
-                            fmid: fmid,
-                            offset: offset
-                        }).then(function (res) {
-                            var body = res.data,
-                                data = body.tracks;
-                            current.offset = body.offset;
-                            if (data) {
-                                Array.prototype.push.apply(tracks, data);
-                                return  tracks[0];
-                            }
-                        });
-                }
+                    fmid = current.fmid,
+                    tracks = current.tracks || [],
+                    fmtype = current.fmtype;
+                return server
+                    .provide('fm.tracks', {
+                        fmid0: fmid,
+                        fmtype0: fmtype
+                    }).then(function (res) {
+                        var body = res.data,
+                            data = body.tracks;
+                        current.offset = body.offset;
+                        if (data) {
+                            Array.prototype.push.apply(tracks, data);
+                            return  tracks[0];
+                        }
+                    });
             }
         };
     });

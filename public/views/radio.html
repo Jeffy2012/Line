@@ -1,21 +1,11 @@
-<div class="nav">
-    <div class="pagination-sm"
-         data-pagination
-         data-total-items="radio.total"
-         data-ng-model="radio.page"
-         data-max-size="radio.maxSize"
-         data-items-per-page="radio.pagesize"
-         data-boundary-links="true"
-         data-rotate="false"
-         data-num-pages="totalPage"
-         data-ng-show="totalPage > 1"></div>
-</div>
-<div class="bg-info clearfix track"
-     data-ng-repeat="fm in radio.fms">
-    <span class="result-name">{{fm.fmname}}</span>
+<div class="fms">
+    <div class="bg-info clearfix track"
+         data-ng-repeat="fm in radio.fms">
+        <span class="result-name">{{fm.fmname}}</span>
 
-    <div class="btn btn-success btn-xs pull-right"
-         data-ng-click="tuneTo(fm)">
-        <span class="glyphicon glyphicon-play"></span>
+        <div class="btn btn-success btn-xs pull-right"
+             data-ng-click="tuneTo(fm)">
+            <span class="glyphicon glyphicon-play"></span>
+        </div>
     </div>
 </div>

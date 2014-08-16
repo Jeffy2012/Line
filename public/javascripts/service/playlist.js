@@ -13,17 +13,23 @@
 angular
     .module('line').
     factory('playlist',
-    function (server, player) {
+    function ($rootScope, server, player) {
         var tracks = store.getAll();
         var playlist = {
             tracks: tracks,
             hashes: [],
+            total: 0,
             _deal: function () {
                 this.hashes = _.sortBy(_.values(tracks), function (track) {
                     return track.timestamp;
                 }).map(function (track) {
                     return track.hash;
                 });
+                this.total = this.hashes.length;
+            },
+            exist: function (track) {
+                track = track || {};
+                return this.hashes.indexOf(track.hash) !== -1;
             },
             add: function (track) {
                 var self = this,
@@ -72,6 +78,7 @@ angular
                             if (exist) {
                                 store.remove(hash);
                                 delete  tracks[hash];
+                                this._deal();
                             }
                         }
                     }
