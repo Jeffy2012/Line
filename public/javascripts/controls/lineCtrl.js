@@ -83,6 +83,7 @@ angular
         });
         $scope.$on('player:PLAY', function () {
             $location.path('/');
+            $scope.status.heart = playlist.exist(player.current);
         });
         $scope.$watch('playlist.total', function () {
             $scope.status.heart = playlist.exist(player.current);
